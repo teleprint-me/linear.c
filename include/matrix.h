@@ -22,11 +22,11 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef struct Matrix {
-    float* elements; ///< N-dimensional array representing the matrix elements.
+typedef struct {
+    float* data; ///< One-dimensional array representing the matrix elements.
+    size_t rows; ///< The number of rows in the matrix.
+    size_t columns;       ///< The number of columns in the matrix.
     bool   is_transposed; ///< Indicates if the matrix is transposed.
-    size_t rows;          ///< The number of rows (height) of the matrix.
-    size_t columns;       ///< The number of columns (width) of the matrix.
 } matrix_t;
 
 // Matrix lifecycle management
