@@ -96,7 +96,7 @@ vector_t* vector_deep_copy(const vector_t* vector) {
  * @brief Create a shallow copy of an N-dimensional vector
  *
  * @note This function returns a pointer to the same allocated memory as the
- * input vector, effectively creating a reference (shallow) copy.
+ *       input vector, effectively creating a reference (shallow) copy.
  *
  * @param vector Input vector
  *
@@ -133,13 +133,13 @@ vector_t* vector_shallow_copy(const vector_t* vector) {
  * any resources used during its creation.
  *
  * @note This function does not handle double freeing directly. To avoid
- * double freeing, ensure pointers are set to NULL after freeing.
+ *       double freeing, ensure pointers are set to NULL after freeing.
  *
- * References:
- * - 7.22.3 Memory management functions on page 347
+ *
+ * @ref 7.22.3 Memory management functions on page 347
  * - <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1548.pdf>
- * - Rationale for setting the pointer to NULL:
- *   <https://stackoverflow.com/q/34284846/15147156>
+ * @ref Rationale for setting the pointer to NULL
+ * - <https://stackoverflow.com/q/34284846/15147156>
  *
  * @param vector A pointer to the vector to be freed
  */
@@ -460,8 +460,8 @@ float vector_mean(const vector_t* vector) {
  *
  * @return The low-pass filtered mean of the vector
  *
- * References:
- * https://www.cs.princeton.edu/courses/archive/fall08/cos436/Duda/PR_learn/mean.htm
+ * @ref low-pass filter mean of a vector
+ * <https://www.cs.princeton.edu/courses/archive/fall08/cos436/Duda/PR_learn/mean.htm>
  *
  */
 float vector_low_pass_filter(const vector_t* vector, float alpha) {
