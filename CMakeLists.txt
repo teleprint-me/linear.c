@@ -21,13 +21,9 @@ foreach(MOD IN LISTS SUBMODULES)
     add_subdirectory(mods/${MOD})
 endforeach()
 
-# Collect all source files in a list
+# Collect all source files into lists
 foreach(MOD IN LISTS MODULES)
     list(APPEND LIB_SOURCES "src/${MOD}.c")
-endforeach()
-
-# Collect all header files in a list
-foreach(MOD IN LISTS MODULES)
     list(APPEND LIB_HEADERS "include/${MOD}.h")
 endforeach()
 
