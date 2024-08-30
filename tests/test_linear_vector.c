@@ -1,14 +1,14 @@
 /**
  * Copyright © 2024 Austin Berrio
  *
- * @file tests/test_vector.c
+ * @file tests/test_linear_vector.c
  *
- * @note keep fixtures and related tests as simple as reasonably possible. The
- * simpler, the better.
+ * @note keep fixtures and related tests as simple as reasonably possible.
+ *       The simpler, the better.
  */
 
-#include "../include/logger.h"
-#include "../include/vector.h"
+#include "logger.h"
+#include "vector.h"
 
 #include <assert.h>
 #include <math.h>
@@ -57,8 +57,8 @@ bool test_vector_cross_product(void);
 /** Fixtures */
 
 /**
- * @brief Determines if two floating-point values are approximately equal within
- * specified tolerances.
+ * @brief Determines if two floating-point values are approximately equal
+ * within specified tolerances.
  *
  * This function checks whether the absolute difference between 'a' and 'b' is
  * less than or equal to the tolerance bounds, defined by both a relative
@@ -68,7 +68,8 @@ bool test_vector_cross_product(void);
  * @param[in]   b       The second floating-point value.
  * @param[in]   relative Relative tolerance for comparing values (default:
  * 1e-03).
- * @param[in]   absolute Absolute tolerance for comparing values (default: 0.0).
+ * @param[in]   absolute Absolute tolerance for comparing values (default:
+ * 0.0).
  *
  * @return true if the absolute difference between 'a' and 'b' is within the
  * tolerance bounds, false otherwise.
@@ -186,9 +187,10 @@ bool test_vector_create(void) {
  * given N-dimensional input vector by allocating new memory for the copied
  * data.
  *
- * This test verifies that `vector_deep_copy()` function works as expected under
- * various conditions, including:
- * - Correctly allocates new memory and copies elements from the original vector
+ * This test verifies that `vector_deep_copy()` function works as expected
+ * under various conditions, including:
+ * - Correctly allocates new memory and copies elements from the original
+ * vector
  * - Maintains the same number of dimensions as the original vector
  *
  * @returns true if all tests pass; false otherwise
