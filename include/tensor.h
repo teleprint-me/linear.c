@@ -17,7 +17,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef struct {
+typedef struct Tensor {
     float* data; ///< One-dimensional array representing the tensor elements.
     size_t rows; ///< Number of rows (height) of each 2D matrix slice.
     size_t columns; ///< Number of columns (width) of each 2D matrix slice.

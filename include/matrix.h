@@ -22,7 +22,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef struct {
+typedef struct Matrix {
     float* data; ///< One-dimensional array representing the matrix elements.
     size_t rows; ///< The number of rows in the matrix.
     size_t columns;       ///< The number of columns in the matrix.
