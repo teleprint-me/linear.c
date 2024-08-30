@@ -24,17 +24,14 @@
 #include <string.h>
 
 /**
- * @brief lifecycle management
- */
-
-/**
  * @brief Create a new N-dimensional vector
  *
- * This function dynamically allocates memory and initializes a new vector with
- * the specified number of dimensions. The values in the vector are set to zero
- * by default.
+ * @note This function dynamically allocates memory and initializes a new
+ *       vector with the specified number of dimensions. The values in the
+ *       vector are set to zero by default.
  *
  * @param dimensions Number of dimensions for the vector
+ *
  * @return A pointer to the newly created vector
  */
 vector_t* vector_create(const size_t dimensions) {
@@ -76,9 +73,10 @@ vector_t* vector_create(const size_t dimensions) {
  * @brief Copy a given N-dimensional vector
  *
  * @note This function creates a deep copy of the input vector by allocating
- * new memory and duplicating its contents.
+ *       new memory and duplicating its contents.
  *
  * @param vector Input vector
+ *
  * @return A pointer to the deep copied vector
  */
 vector_t* vector_deep_copy(const vector_t* vector) {
@@ -101,6 +99,7 @@ vector_t* vector_deep_copy(const vector_t* vector) {
  * input vector, effectively creating a reference (shallow) copy.
  *
  * @param vector Input vector
+ *
  * @return A pointer to the shallow copied vector
  */
 vector_t* vector_shallow_copy(const vector_t* vector) {
@@ -160,11 +159,12 @@ void vector_free(vector_t* vector) {
 /**
  * @brief Element-wise operations
  *
- * These helper functions perform basic arithmetic on two floating-point values
- * and return the result.
+ * @note These helper functions perform basic arithmetic on two floating-point
+ *       values and return the result.
  *
  * @param x First operand
  * @param y Second operand
+ *
  * @return Result of the operation
  */
 
@@ -195,13 +195,14 @@ float scalar_divide(float x, float y) {
 /**
  * @brief Executor for element-wise vector-to-scalar functions
  *
- * This function applies a given operation to each corresponding pair of
- * elements in two vectors and returns the resulting vector.
+ * @note This function applies a given operation to each corresponding pair of
+ *       elements in two vectors and returns the resulting vector.
  *
  * @param a First input vector
  * @param b Second input scalar
  * @param operation A pointer to the function performing the element-wise
  * operation
+ *
  * @return A pointer to the resulting vector
  */
 vector_t* vector_scalar_elementwise_operation(
@@ -228,6 +229,7 @@ vector_t* vector_scalar_elementwise_operation(
  *
  * @param a Input vector
  * @param b Scalar value to add
+ *
  * @return A pointer to the resulting vector
  */
 vector_t* vector_scalar_add(const vector_t* a, const float b) {
@@ -239,6 +241,7 @@ vector_t* vector_scalar_add(const vector_t* a, const float b) {
  *
  * @param a Input vector
  * @param b Scalar value to subtract
+ *
  * @return A pointer to the resulting vector
  */
 vector_t* vector_scalar_subtract(const vector_t* a, const float b) {
@@ -250,6 +253,7 @@ vector_t* vector_scalar_subtract(const vector_t* a, const float b) {
  *
  * @param a Input vector
  * @param b Scalar value to multiply
+ *
  * @return A pointer to the resulting vector
  */
 vector_t* vector_scalar_multiply(const vector_t* a, const float b) {
@@ -261,6 +265,7 @@ vector_t* vector_scalar_multiply(const vector_t* a, const float b) {
  *
  * @param a Input vector
  * @param b Scalar value to divide by
+ *
  * @return A pointer to the resulting vector
  */
 vector_t* vector_scalar_divide(const vector_t* a, const float b) {
@@ -270,13 +275,14 @@ vector_t* vector_scalar_divide(const vector_t* a, const float b) {
 /**
  * @brief Executor for element-wise vector-to-vector functions
  *
- * This function applies a given operation to each corresponding pair of
- * elements in two vectors and returns the resulting vector.
+ * @note This function applies a given operation to each corresponding pair of
+ *       elements in two vectors and returns the resulting vector.
  *
  * @param a First input vector
  * @param b Second input vector
  * @param operation A pointer to the function performing the element-wise
- * operation
+ *                  operation
+ *
  * @return A pointer to the resulting vector
  */
 vector_t* vector_vector_elementwise_operation(
@@ -314,6 +320,7 @@ vector_t* vector_vector_elementwise_operation(
  *
  * @param a First input vector
  * @param b Second input vector
+ *
  * @return A pointer to the resulting vector
  */
 vector_t* vector_vector_add(const vector_t* a, const vector_t* b) {
@@ -325,6 +332,7 @@ vector_t* vector_vector_add(const vector_t* a, const vector_t* b) {
  *
  * @param a First input vector
  * @param b Second input vector
+ *
  * @return A pointer to the resulting vector
  */
 vector_t* vector_vector_subtract(const vector_t* a, const vector_t* b) {
@@ -336,6 +344,7 @@ vector_t* vector_vector_subtract(const vector_t* a, const vector_t* b) {
  *
  * @param a First input vector
  * @param b Second input vector
+ *
  * @return A pointer to the resulting vector
  */
 vector_t* vector_vector_multiply(const vector_t* a, const vector_t* b) {
@@ -347,6 +356,7 @@ vector_t* vector_vector_multiply(const vector_t* a, const vector_t* b) {
  *
  * @param a First input vector
  * @param b Second input vector
+ *
  * @return A pointer to the resulting vector
  */
 vector_t* vector_vector_divide(const vector_t* a, const vector_t* b) {
@@ -361,6 +371,7 @@ vector_t* vector_vector_divide(const vector_t* a, const vector_t* b) {
  * @brief Determine the magnitude or length of an N-dimensional vector
  *
  * @param vector Input vector
+ *
  * @return The magnitude of the vector
  */
 float vector_magnitude(const vector_t* vector) {
@@ -379,6 +390,7 @@ float vector_magnitude(const vector_t* vector) {
  *
  * @param a First input vector
  * @param b Second input vector
+ *
  * @return The distance between the two vectors
  */
 float vector_distance(const vector_t* a, const vector_t* b) {
@@ -406,11 +418,12 @@ float vector_distance(const vector_t* a, const vector_t* b) {
 /**
  * @brief Calculate the mean of an N-dimensional vector
  *
- * This function estimates the mean by weighted averaging.
+ * @note This function estimates the mean by weighted averaging.
  *
  * m(n) = [x(1) + x(2) + ... + x(n)] / n
  *
  * @param vector Input vector
+ *
  * @return The mean of the vector
  */
 float vector_mean(const vector_t* vector) {
@@ -437,11 +450,14 @@ float vector_mean(const vector_t* vector) {
 /**
  * @brief Low pass filter on an N-dimensional vector
  *
- * This function estimates the mean by low-pass filtering rather than
- * averaging. m(n + 1) = (1 - α) m(n) + α x(n + 1)
+ * @note This function estimates the mean by low-pass filtering rather than
+ *       averaging.
+ *
+ * m(n + 1) = ((1 - α) * m(n)) + (α * x(n + 1))
  *
  * @param vector Input vector
  * @param alpha Smoothing factor for the low-pass filter
+ *
  * @return The low-pass filtered mean of the vector
  *
  * References:
@@ -460,7 +476,8 @@ float vector_low_pass_filter(const vector_t* vector, float alpha) {
  *
  * @param vector Input vector
  * @param inplace Boolean flag indicating whether to modify the input vector or
- * return a new vector
+ *                return a new vector
+ *
  * @return A pointer to the normalized vector
  */
 vector_t* vector_normalize(vector_t* vector, bool inplace) {
@@ -503,7 +520,8 @@ vector_t* vector_normalize(vector_t* vector, bool inplace) {
  * @param vector Input vector
  * @param scalar Scaling factor
  * @param inplace Boolean flag indicating whether to modify the input vector or
- * return a new vector
+ *                return a new vector
+ *
  * @return A pointer to the scaled vector
  */
 vector_t* vector_scale(vector_t* vector, float scalar, bool inplace) {
@@ -541,7 +559,8 @@ vector_t* vector_scale(vector_t* vector, float scalar, bool inplace) {
  * @param min Minimum value for clipping
  * @param max Maximum value for clipping
  * @param inplace Boolean flag indicating whether to modify the input vector or
- * return a new vector
+ *                return a new vector
+ *
  * @return A pointer to the clipped vector
  */
 vector_t* vector_clip(vector_t* vector, float min, float max, bool inplace) {
@@ -594,6 +613,7 @@ vector_t* vector_clip(vector_t* vector, float min, float max, bool inplace) {
  *
  * @param a First input vector
  * @param b Second input vector
+ *
  * @return The dot product of the two vectors
  */
 float vector_dot_product(const vector_t* a, const vector_t* b) {
@@ -624,6 +644,7 @@ float vector_dot_product(const vector_t* a, const vector_t* b) {
  *
  * @param a First input vector (3D vector)
  * @param b Second input vector (3D vector)
+ *
  * @return A pointer to the cross product vector
  */
 vector_t* vector_cross_product(const vector_t* a, const vector_t* b) {
@@ -661,13 +682,14 @@ vector_t* vector_cross_product(const vector_t* a, const vector_t* b) {
 /**
  * @brief Convert polar coordinates to cartesian coordinates
  *
- * Polar coordinates are defined as the ordered pair (r, θ) names a point r
- * units from origin along the terminal side of angle θ in standard position
- * (origin to elements).
+ * @note Polar coordinates are defined as the ordered pair (r, θ) names a point
+ *       r units from origin along the terminal side of angle θ in standard
+ *       position (origin to elements).
  *
- * @note x = r cos θ and y = r sin θ
+ * x = r cos θ and y = r sin θ
  *
  * @param polar_vector Input vector in polar coordinates
+ *
  * @return A pointer to the vector in cartesian coordinates
  */
 vector_t* vector_polar_to_cartesian(const vector_t* polar_vector) {
@@ -694,12 +716,13 @@ vector_t* vector_polar_to_cartesian(const vector_t* polar_vector) {
 /**
  * @brief Convert cartesian coordinates to polar coordinates
  *
- * The derivation between polar and cartesian coordinates is to consider a
- * point P with the rectangular (x, y) and polar (r, θ) coordinates.
+ * @note The derivation between polar and cartesian coordinates is to consider
+ *       a point P with the rectangular (x, y) and polar (r, θ) coordinates.
  *
- * @note r = ± √(x^2 + y^2) and tan θ = y / x
+ * r = ± √(x^2 + y^2) and tan θ = y / x
  *
  * @param cartesian_vector Input vector in cartesian coordinates
+ *
  * @return A pointer to the vector in polar coordinates
  */
 vector_t* vector_cartesian_to_polar(const vector_t* cartesian_vector) {
