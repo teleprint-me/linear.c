@@ -23,17 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-/**
- * @brief Create a new N-dimensional vector
- *
- * @note This function dynamically allocates memory and initializes a new
- *       vector with the specified number of dimensions. The values in the
- *       vector are set to zero by default.
- *
- * @param columns The number of elements (dimensions) in the vector.
- *
- * @return A pointer to the newly created vector
- */
+// Lifecycle management
+
 vector_t* vector_create(const size_t columns) {
     vector_t* vector = (vector_t*) malloc(sizeof(vector_t));
     if (NULL == vector) { // If no memory was allocated
@@ -71,16 +62,21 @@ vector_t* vector_create(const size_t columns) {
     return vector;
 }
 
-/**
- * @brief Copy a given N-dimensional vector
- *
- * @note This function creates a deep copy of the input vector by allocating
- *       new memory and duplicating its contents.
- *
- * @param vector Input vector
- *
- * @return A pointer to the deep copied vector
- */
+void vector_free(vector_t* vector) {
+    if (vector == NULL) {
+        return;
+    }
+
+    if (vector->data) {
+        free(vector->data);
+    }
+
+    free(vector);
+    // Note: Setting the pointer to NULL here would only affect the local copy
+}
+
+// Copy operations
+
 vector_t* vector_deep_copy(const vector_t* vector) {
     vector_t* deep_copy = vector_create(vector->columns);
     if (NULL == deep_copy) {
@@ -94,16 +90,6 @@ vector_t* vector_deep_copy(const vector_t* vector) {
     return deep_copy;
 }
 
-/**
- * @brief Create a shallow copy of an N-dimensional vector
- *
- * @note This function returns a pointer to the same allocated memory as the
- *       input vector, effectively creating a reference (shallow) copy.
- *
- * @param vector Input vector
- *
- * @return A pointer to the shallow copied vector
- */
 vector_t* vector_shallow_copy(const vector_t* vector) {
     if (NULL == vector) {
         return NULL;
@@ -128,46 +114,7 @@ vector_t* vector_shallow_copy(const vector_t* vector) {
     return new_vector;
 }
 
-/**
- * @brief Free an allocated N-dimensional vector
- *
- * @note This function deallocates memory associated with a given vector,
- *       releasing any resources used during its creation.
- *
- * @note This function does not handle double freeing directly. To avoid
- *       double freeing, ensure pointers are set to NULL after freeing.
- *
- * @ref 7.22.3 Memory management functions on page 347
- * - <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1548.pdf>
- * @ref Rationale for setting the pointer to NULL
- * - <https://stackoverflow.com/q/34284846/15147156>
- *
- * @param vector A pointer to the vector to be freed
- */
-void vector_free(vector_t* vector) {
-    if (vector == NULL) {
-        return;
-    }
-
-    if (vector->data) {
-        free(vector->data);
-    }
-
-    free(vector);
-    // Note: Setting the pointer to NULL here would only affect the local copy
-}
-
-/**
- * @brief Element-wise operations
- *
- * @note These helper functions perform basic arithmetic on two floating-point
- *       values and return the result.
- *
- * @param x First operand
- * @param y Second operand
- *
- * @return Result of the operation
- */
+// Scalar operations
 
 float scalar_add(float x, float y) {
     return x + y;
@@ -193,19 +140,8 @@ float scalar_divide(float x, float y) {
     return x / y;
 }
 
-/**
- * @brief Executor for element-wise vector-to-scalar functions
- *
- * @note This function applies a given operation to each corresponding pair of
- *       elements in two vectors and returns the resulting vector.
- *
- * @param a First input vector
- * @param b Second input scalar
- * @param operation A pointer to the function performing the element-wise
- * operation
- *
- * @return A pointer to the resulting vector
- */
+// Element-wise operations
+
 vector_t* vector_scalar_elementwise_operation(
     const vector_t* a, const float b, float (*operation)(float, float)
 ) {
@@ -225,67 +161,24 @@ vector_t* vector_scalar_elementwise_operation(
     return c;
 }
 
-/**
- * @brief Add a scalar value to an N-dimensional vector
- *
- * @param a Input vector
- * @param b Scalar value to add
- *
- * @return A pointer to the resulting vector
- */
 vector_t* vector_scalar_add(const vector_t* a, const float b) {
     return vector_scalar_elementwise_operation(a, b, scalar_add);
 }
 
-/**
- * @brief Subtract a scalar value from an N-dimensional vector
- *
- * @param a Input vector
- * @param b Scalar value to subtract
- *
- * @return A pointer to the resulting vector
- */
 vector_t* vector_scalar_subtract(const vector_t* a, const float b) {
     return vector_scalar_elementwise_operation(a, b, scalar_subtract);
 }
 
-/**
- * @brief Multiply a scalar value with an N-dimensional vector
- *
- * @param a Input vector
- * @param b Scalar value to multiply
- *
- * @return A pointer to the resulting vector
- */
 vector_t* vector_scalar_multiply(const vector_t* a, const float b) {
     return vector_scalar_elementwise_operation(a, b, scalar_multiply);
 }
 
-/**
- * @brief Divide an N-dimensional vector by a scalar value
- *
- * @param a Input vector
- * @param b Scalar value to divide by
- *
- * @return A pointer to the resulting vector
- */
 vector_t* vector_scalar_divide(const vector_t* a, const float b) {
     return vector_scalar_elementwise_operation(a, b, scalar_divide);
 }
 
-/**
- * @brief Executor for element-wise vector-to-vector functions
- *
- * @note This function applies a given operation to each corresponding pair of
- *       elements in two vectors and returns the resulting vector.
- *
- * @param a First input vector
- * @param b Second input vector
- * @param operation A pointer to the function performing the element-wise
- *                  operation
- *
- * @return A pointer to the resulting vector
- */
+// Vector based operations
+
 vector_t* vector_vector_elementwise_operation(
     const vector_t* a, const vector_t* b, float (*operation)(float, float)
 ) {
@@ -316,65 +209,24 @@ vector_t* vector_vector_elementwise_operation(
     return c;
 }
 
-/**
- * @brief Add two N-dimensional vectors
- *
- * @param a First input vector
- * @param b Second input vector
- *
- * @return A pointer to the resulting vector
- */
 vector_t* vector_vector_add(const vector_t* a, const vector_t* b) {
     return vector_vector_elementwise_operation(a, b, scalar_add);
 }
 
-/**
- * @brief Subtract one N-dimensional vector from another
- *
- * @param a First input vector
- * @param b Second input vector
- *
- * @return A pointer to the resulting vector
- */
 vector_t* vector_vector_subtract(const vector_t* a, const vector_t* b) {
     return vector_vector_elementwise_operation(a, b, scalar_subtract);
 }
 
-/**
- * @brief Multiply two N-dimensional vectors
- *
- * @param a First input vector
- * @param b Second input vector
- *
- * @return A pointer to the resulting vector
- */
 vector_t* vector_vector_multiply(const vector_t* a, const vector_t* b) {
     return vector_vector_elementwise_operation(a, b, scalar_multiply);
 }
 
-/**
- * @brief Divide an N-dimensional vector by another N-dimensional vector
- *
- * @param a First input vector
- * @param b Second input vector
- *
- * @return A pointer to the resulting vector
- */
 vector_t* vector_vector_divide(const vector_t* a, const vector_t* b) {
     return vector_vector_elementwise_operation(a, b, scalar_divide);
 }
 
-/**
- * @brief Common vector operations
- */
+// Common vector operations
 
-/**
- * @brief Determine the magnitude or length of an N-dimensional vector
- *
- * @param vector Input vector
- *
- * @return The magnitude of the vector
- */
 float vector_magnitude(const vector_t* vector) {
     float sum = 0;
 
@@ -386,14 +238,6 @@ float vector_magnitude(const vector_t* vector) {
     return sqrt(sum);
 }
 
-/**
- * @brief Calculate the distance between two given N-dimensional vectors
- *
- * @param a First input vector
- * @param b Second input vector
- *
- * @return The distance between the two vectors
- */
 float vector_distance(const vector_t* a, const vector_t* b) {
     float distance_squared = 0.0f;
 
@@ -416,17 +260,6 @@ float vector_distance(const vector_t* a, const vector_t* b) {
     return sqrtf(distance_squared);
 }
 
-/**
- * @brief Calculate the mean of an N-dimensional vector
- *
- * @note This function estimates the mean by weighted averaging.
- *
- * m(n) = [x(1) + x(2) + ... + x(n)] / n
- *
- * @param vector Input vector
- *
- * @return The mean of the vector
- */
 float vector_mean(const vector_t* vector) {
     if (NULL == vector || 0 == vector->columns) {
         return NAN; // Return NAN for invalid input
@@ -449,6 +282,9 @@ float vector_mean(const vector_t* vector) {
 }
 
 /**
+ * @todo implement low-pass filter for calculating low-pass filtered mean of
+ * the vector
+ *
  * @brief Low pass filter on an N-dimensional vector
  *
  * @note This function estimates the mean by low-pass filtering rather than
@@ -456,14 +292,10 @@ float vector_mean(const vector_t* vector) {
  *
  * m(n + 1) = ((1 - α) * m(n)) + (α * x(n + 1))
  *
+ * @note not sure about order of operations. need to double check.
+ *
  * @param vector Input vector
  * @param alpha Smoothing factor for the low-pass filter
- *
- * @return The low-pass filtered mean of the vector
- *
- * @ref low-pass filter mean of a vector
- * <https://www.cs.princeton.edu/courses/archive/fall08/cos436/Duda/PR_learn/mean.htm>
- *
  */
 float vector_low_pass_filter(const vector_t* vector, float alpha) {
     LOG(&global_logger,
@@ -472,15 +304,6 @@ float vector_low_pass_filter(const vector_t* vector, float alpha) {
     return -1.0f;
 }
 
-/**
- * @brief Normalize a given N-dimensional vector in place
- *
- * @param vector Input vector
- * @param inplace Boolean flag indicating whether to modify the input vector or
- *                return a new vector
- *
- * @return A pointer to the normalized vector
- */
 vector_t* vector_normalize(vector_t* vector, bool inplace) {
     float magnitude = vector_magnitude(vector);
 
@@ -515,16 +338,6 @@ vector_t* vector_normalize(vector_t* vector, bool inplace) {
     return unit;
 }
 
-/**
- * @brief Scale an N-dimensional vector by the specified factor
- *
- * @param vector Input vector
- * @param scalar Scaling factor
- * @param inplace Boolean flag indicating whether to modify the input vector or
- *                return a new vector
- *
- * @return A pointer to the scaled vector
- */
 vector_t* vector_scale(vector_t* vector, float scalar, bool inplace) {
     if (vector == NULL) {
         return NULL;
@@ -553,17 +366,6 @@ vector_t* vector_scale(vector_t* vector, float scalar, bool inplace) {
     return scaled_vector;
 }
 
-/**
- * @brief Clip an N-dimensional vector within a given range
- *
- * @param vector Input vector
- * @param min Minimum value for clipping
- * @param max Maximum value for clipping
- * @param inplace Boolean flag indicating whether to modify the input vector or
- *                return a new vector
- *
- * @return A pointer to the clipped vector
- */
 vector_t* vector_clip(vector_t* vector, float min, float max, bool inplace) {
     if (NULL == vector || 0 == vector->columns) {
         return NULL;
@@ -603,20 +405,8 @@ vector_t* vector_clip(vector_t* vector, float min, float max, bool inplace) {
     return clipped_vector;
 }
 
-/**
- * @brief Special vector operations
- */
+// Special vector operations
 
-/**
- * @brief Calculate the dot product of two N-dimensional vectors
- *
- * @note Dot product is n-dimensional
- *
- * @param a First input vector
- * @param b Second input vector
- *
- * @return The dot product of the two vectors
- */
 float vector_dot_product(const vector_t* a, const vector_t* b) {
     if (a->columns != b->columns) {
         LOG(&global_logger,
@@ -638,16 +428,6 @@ float vector_dot_product(const vector_t* a, const vector_t* b) {
     return product;
 }
 
-/**
- * @brief Return the cross product of two 3D vectors
- *
- * @note Cross product is 3-dimensional
- *
- * @param a First input vector (3D vector)
- * @param b Second input vector (3D vector)
- *
- * @return A pointer to the cross product vector
- */
 vector_t* vector_cross_product(const vector_t* a, const vector_t* b) {
     // Ensure both vectors are 3-dimensional.
     if (a->columns != 3 || b->columns != 3) {
@@ -673,23 +453,8 @@ vector_t* vector_cross_product(const vector_t* a, const vector_t* b) {
     return result;
 }
 
-/**
- * @brief Special coordinates
- */
+// Special coordinates
 
-/**
- * @brief Convert polar coordinates to cartesian coordinates
- *
- * @note Polar coordinates are defined as the ordered pair (r, θ) names a point
- *       r units from origin along the terminal side of angle θ in standard
- *       position (origin to elements).
- *
- * x = r cos θ and y = r sin θ
- *
- * @param polar_vector Input vector in polar coordinates
- *
- * @return A pointer to the vector in cartesian coordinates
- */
 vector_t* vector_polar_to_cartesian(const vector_t* polar_vector) {
     if (NULL == polar_vector || polar_vector->columns != 2) {
         return NULL; // Return NULL if input is invalid
@@ -711,18 +476,6 @@ vector_t* vector_polar_to_cartesian(const vector_t* polar_vector) {
     return cartesian_vector;
 }
 
-/**
- * @brief Convert cartesian coordinates to polar coordinates
- *
- * @note The derivation between polar and cartesian coordinates is to consider
- *       a point P with the rectangular (x, y) and polar (r, θ) coordinates.
- *
- * r = ± √(x^2 + y^2) and tan θ = y / x
- *
- * @param cartesian_vector Input vector in cartesian coordinates
- *
- * @return A pointer to the vector in polar coordinates
- */
 vector_t* vector_cartesian_to_polar(const vector_t* cartesian_vector) {
     if (NULL == cartesian_vector || cartesian_vector->columns != 2) {
         return NULL; // Return NULL if input is invalid
