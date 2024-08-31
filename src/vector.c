@@ -45,7 +45,8 @@ vector_t* vector_create(const size_t columns) {
         return NULL;  // Early return if vector creation failed
     }
 
-    /* After allocating vector->data
+    /**
+     * Initialize all elements to zero
      *
      * @note memset may be optimized away (under the as-if rules) if the object
      *       modified by this function is not accessed again for the rest of
