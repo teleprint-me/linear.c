@@ -71,22 +71,23 @@ void vector_free(vector_t* vector);
 // Copy operations
 
 /**
- * @brief Copy a given N-dimensional vector
+ * @brief Deep copy a given N-dimensional vector
  *
  * This function creates a deep copy of the input vector by allocating new
- * memory and duplicating its contents.
+ * memory and duplicating its contents element-wise.
  *
  * @param vector Input vector
  *
- * @return A pointer to the deep copied vector
+ * @return A pointer to the newly created, deep copied vector
  */
 vector_t* vector_deep_copy(const vector_t* vector);
 
 /**
- * @brief Create a shallow copy of an N-dimensional vector
+ * @brief Shallow copy an N-dimensional vector
  *
  * This function returns a pointer to the same allocated memory as the input
- * vector, effectively creating a reference (shallow) copy.
+ * vector. Effectively creating a reference (shallow) copy of the original
+ * vector's data, without allocating new memory for it.
  *
  * @param vector Input vector
  *
