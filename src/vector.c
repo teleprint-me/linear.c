@@ -30,41 +30,43 @@
  *       vector with the specified number of dimensions. The values in the
  *       vector are set to zero by default.
  *
- * @param dimensions Number of dimensions for the vector
+ * @param columns The number of elements (dimensions) in the vector.
  *
  * @return A pointer to the newly created vector
  */
-vector_t* vector_create(const size_t dimensions) {
+vector_t* vector_create(const size_t columns) {
     vector_t* vector = (vector_t*) malloc(sizeof(vector_t));
     if (NULL == vector) { // If no memory was allocated
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
             "Failed to allocate %zu bytes to struct Vector.\n",
-            dimensions);
+            columns);
         return NULL; // Early return if vector creation failed
     }
 
-    vector->elements = (float*) malloc(dimensions * sizeof(float));
-    if (NULL == vector->elements) { // Failed to allocate memory for elements
+    vector->data = (float*) malloc(columns * sizeof(float));
+    if (NULL == vector->data) { // Failed to allocate memory for elements
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
-            "Failed to allocate %zu bytes to vector->elements.\n",
-            dimensions);
+            "Failed to allocate %zu bytes to vector->data.\n",
+            columns);
         free(vector); // Free allocated vector memory to prevent leaks
         return NULL;  // Early return if vector creation failed
     }
 
-    // After allocating vector->elements
-    // NOTE: memset may be optimized away (under the as-if rules) if the object
-    // modified by this function is not accessed again for the rest of its
-    // lifetime (e.g., gcc bug 8537). For this reason, we do not employ its use
-    // here.
-    for (size_t i = 0; i < dimensions; i++) {
-        vector->elements[i] = 0.0f;
+    /* After allocating vector->data
+     *
+     * @note memset may be optimized away (under the as-if rules) if the object
+     *       modified by this function is not accessed again for the rest of
+     *       its lifetime (e.g., gcc bug 8537). For this reason, we do not
+     *       employ its use here.
+     */
+    for (size_t i = 0; i < columns; i++) {
+        vector->data[i] = 0.0f;
     }
 
-    vector->dimensions
-        = dimensions; // track the dimensions of the vector to prevent decay.
+    // track the dimensions of the vector to prevent decay.
+    vector->columns = columns;
 
     return vector;
 }
@@ -80,13 +82,13 @@ vector_t* vector_create(const size_t dimensions) {
  * @return A pointer to the deep copied vector
  */
 vector_t* vector_deep_copy(const vector_t* vector) {
-    vector_t* deep_copy = vector_create(vector->dimensions);
+    vector_t* deep_copy = vector_create(vector->columns);
     if (NULL == deep_copy) {
         return NULL;
     }
 
-    for (size_t i = 0; i < vector->dimensions; ++i) {
-        deep_copy->elements[i] = vector->elements[i];
+    for (size_t i = 0; i < vector->columns; ++i) {
+        deep_copy->data[i] = vector->data[i];
     }
 
     return deep_copy;
@@ -118,10 +120,10 @@ vector_t* vector_shallow_copy(const vector_t* vector) {
     }
 
     // Copy all fields except elements (pointer to an array)
-    new_vector->dimensions = vector->dimensions;
+    new_vector->columns = vector->columns;
 
     // Assign the existing pointer to the new Vector structure
-    new_vector->elements = vector->elements;
+    new_vector->data = vector->data;
 
     return new_vector;
 }
@@ -129,12 +131,11 @@ vector_t* vector_shallow_copy(const vector_t* vector) {
 /**
  * @brief Free an allocated N-dimensional vector
  *
- * This function deallocates memory associated with a given vector, releasing
- * any resources used during its creation.
+ * @note This function deallocates memory associated with a given vector,
+ *       releasing any resources used during its creation.
  *
  * @note This function does not handle double freeing directly. To avoid
  *       double freeing, ensure pointers are set to NULL after freeing.
- *
  *
  * @ref 7.22.3 Memory management functions on page 347
  * - <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1548.pdf>
@@ -148,8 +149,8 @@ void vector_free(vector_t* vector) {
         return;
     }
 
-    if (vector->elements) {
-        free(vector->elements);
+    if (vector->data) {
+        free(vector->data);
     }
 
     free(vector);
@@ -208,7 +209,7 @@ float scalar_divide(float x, float y) {
 vector_t* vector_scalar_elementwise_operation(
     const vector_t* a, const float b, float (*operation)(float, float)
 ) {
-    vector_t* c = vector_create(a->dimensions);
+    vector_t* c = vector_create(a->columns);
     if (NULL == c) {
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
@@ -217,8 +218,8 @@ vector_t* vector_scalar_elementwise_operation(
     }
 
     // Perform element-wise operation
-    for (size_t i = 0; i < a->dimensions; i++) {
-        c->elements[i] = operation(a->elements[i], b);
+    for (size_t i = 0; i < a->columns; i++) {
+        c->data[i] = operation(a->data[i], b);
     }
 
     return c;
@@ -288,18 +289,18 @@ vector_t* vector_scalar_divide(const vector_t* a, const float b) {
 vector_t* vector_vector_elementwise_operation(
     const vector_t* a, const vector_t* b, float (*operation)(float, float)
 ) {
-    if (a->dimensions != b->dimensions) {
+    if (a->columns != b->columns) {
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
             "Vector dimensions do not match. Cannot perform operation on "
             "vectors of size %zu and "
             "%zu.\n",
-            a->dimensions,
-            b->dimensions);
+            a->columns,
+            b->columns);
         return NULL;
     }
 
-    vector_t* c = vector_create(a->dimensions);
+    vector_t* c = vector_create(a->columns);
     if (NULL == c) {
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
@@ -308,8 +309,8 @@ vector_t* vector_vector_elementwise_operation(
     }
 
     // Perform element-wise operation
-    for (size_t i = 0; i < a->dimensions; i++) {
-        c->elements[i] = operation(a->elements[i], b->elements[i]);
+    for (size_t i = 0; i < a->columns; i++) {
+        c->data[i] = operation(a->data[i], b->data[i]);
     }
 
     return c;
@@ -378,8 +379,8 @@ float vector_magnitude(const vector_t* vector) {
     float sum = 0;
 
     // sum the square of the elements for n-dimensional vectors
-    for (size_t i = 0; i < vector->dimensions; i++) {
-        sum += vector->elements[i] * vector->elements[i];
+    for (size_t i = 0; i < vector->columns; i++) {
+        sum += vector->data[i] * vector->data[i];
     }
 
     return sqrt(sum);
@@ -396,20 +397,20 @@ float vector_magnitude(const vector_t* vector) {
 float vector_distance(const vector_t* a, const vector_t* b) {
     float distance_squared = 0.0f;
 
-    if (a->dimensions != b->dimensions) {
+    if (a->columns != b->columns) {
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
             "Vector dimensions do not match. Cannot perform operation on "
             "vectors of size %zu and "
             "%zu.\n",
-            a->dimensions,
-            b->dimensions);
+            a->columns,
+            b->columns);
         return NAN;
     }
 
-    for (size_t i = 0; i < a->dimensions; ++i) {
-        distance_squared += (a->elements[i] - b->elements[i])
-                            * (a->elements[i] - b->elements[i]);
+    for (size_t i = 0; i < a->columns; ++i) {
+        distance_squared
+            += (a->data[i] - b->data[i]) * (a->data[i] - b->data[i]);
     }
 
     return sqrtf(distance_squared);
@@ -427,13 +428,13 @@ float vector_distance(const vector_t* a, const vector_t* b) {
  * @return The mean of the vector
  */
 float vector_mean(const vector_t* vector) {
-    if (NULL == vector || 0 == vector->dimensions) {
+    if (NULL == vector || 0 == vector->columns) {
         return NAN; // Return NAN for invalid input
     }
 
     float sum = 0.0f;
-    for (size_t i = 0; i < vector->dimensions; i++) {
-        if (isnan(vector->elements[i])) {
+    for (size_t i = 0; i < vector->columns; i++) {
+        if (isnan(vector->data[i])) {
             // Log error and return NAN if any element is NaN
             LOG(&global_logger,
                 LOG_LEVEL_ERROR,
@@ -441,10 +442,10 @@ float vector_mean(const vector_t* vector) {
                 i);
             return NAN;
         }
-        sum += vector->elements[i];
+        sum += vector->data[i];
     }
 
-    return sum / vector->dimensions; // Return the mean
+    return sum / vector->columns; // Return the mean
 }
 
 /**
@@ -492,14 +493,14 @@ vector_t* vector_normalize(vector_t* vector, bool inplace) {
 
     if (inplace) {
         // scale the elements down by the magnitude to produce a unit vector
-        for (size_t i = 0; i < vector->dimensions; i++) {
-            vector->elements[i] /= magnitude;
+        for (size_t i = 0; i < vector->columns; i++) {
+            vector->data[i] /= magnitude;
         }
 
         return vector;
     }
 
-    vector_t* unit = vector_create(vector->dimensions);
+    vector_t* unit = vector_create(vector->columns);
     if (NULL == unit) {
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
@@ -507,8 +508,8 @@ vector_t* vector_normalize(vector_t* vector, bool inplace) {
         return NULL;
     }
 
-    for (size_t i = 0; i < vector->dimensions; i++) {
-        unit->elements[i] = vector->elements[i] / magnitude;
+    for (size_t i = 0; i < vector->columns; i++) {
+        unit->data[i] = vector->data[i] / magnitude;
     }
 
     return unit;
@@ -530,14 +531,14 @@ vector_t* vector_scale(vector_t* vector, float scalar, bool inplace) {
     }
 
     if (inplace) { // block out-of-place vector scaling if in-place is true
-        for (size_t i = 0; i < vector->dimensions; ++i) {
-            vector->elements[i] *= scalar; // scale the vector in-place
+        for (size_t i = 0; i < vector->columns; ++i) {
+            vector->data[i] *= scalar; // scale the vector in-place
         }
         return vector; // return the scaled vector
     }
 
     // perform out-of-place vector scaling
-    vector_t* scaled_vector = vector_create(vector->dimensions);
+    vector_t* scaled_vector = vector_create(vector->columns);
     if (scaled_vector == NULL) {
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
@@ -545,8 +546,8 @@ vector_t* vector_scale(vector_t* vector, float scalar, bool inplace) {
         return NULL;
     }
 
-    for (size_t i = 0; i < vector->dimensions; ++i) {
-        scaled_vector->elements[i] = vector->elements[i] * scalar;
+    for (size_t i = 0; i < vector->columns; ++i) {
+        scaled_vector->data[i] = vector->data[i] * scalar;
     }
 
     return scaled_vector;
@@ -564,17 +565,17 @@ vector_t* vector_scale(vector_t* vector, float scalar, bool inplace) {
  * @return A pointer to the clipped vector
  */
 vector_t* vector_clip(vector_t* vector, float min, float max, bool inplace) {
-    if (NULL == vector || 0 == vector->dimensions) {
+    if (NULL == vector || 0 == vector->columns) {
         return NULL;
     }
 
     if (inplace) {
-        for (size_t i = 0; i < vector->dimensions; i++) {
-            if (vector->elements[i] < min) {
-                vector->elements[i] = min;
+        for (size_t i = 0; i < vector->columns; i++) {
+            if (vector->data[i] < min) {
+                vector->data[i] = min;
             }
-            if (vector->elements[i] > max) {
-                vector->elements[i] = max;
+            if (vector->data[i] > max) {
+                vector->data[i] = max;
             }
         }
 
@@ -582,19 +583,19 @@ vector_t* vector_clip(vector_t* vector, float min, float max, bool inplace) {
     }
 
     // create a vector if !inplace
-    vector_t* clipped_vector = vector_create(vector->dimensions);
+    vector_t* clipped_vector = vector_create(vector->columns);
     if (NULL == clipped_vector) {
         return NULL; // NOTE: we can return and not log because vector_create
                      // logs the error for us
     }
 
-    for (size_t i = 0; i < vector->dimensions; i++) {
-        if (vector->elements[i] < min) {
-            clipped_vector->elements[i] = min;
-        } else if (vector->elements[i] > max) {
-            clipped_vector->elements[i] = max;
+    for (size_t i = 0; i < vector->columns; i++) {
+        if (vector->data[i] < min) {
+            clipped_vector->data[i] = min;
+        } else if (vector->data[i] > max) {
+            clipped_vector->data[i] = max;
         } else {
-            clipped_vector->elements[i] = vector->elements[i];
+            clipped_vector->data[i] = vector->data[i];
         }
     }
 
@@ -617,21 +618,21 @@ vector_t* vector_clip(vector_t* vector, float min, float max, bool inplace) {
  * @return The dot product of the two vectors
  */
 float vector_dot_product(const vector_t* a, const vector_t* b) {
-    if (a->dimensions != b->dimensions) {
+    if (a->columns != b->columns) {
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
             "Vector dimensions do not match. Cannot perform operation on "
             "vectors of size %zu and "
             "%zu.\n",
-            a->dimensions,
-            b->dimensions);
+            a->columns,
+            b->columns);
         return NAN;
     }
 
     float product = 0.0f;
 
-    for (size_t i = 0; i < a->dimensions; i++) {
-        product += a->elements[i] * b->elements[i];
+    for (size_t i = 0; i < a->columns; i++) {
+        product += a->data[i] * b->data[i];
     }
 
     return product;
@@ -649,7 +650,7 @@ float vector_dot_product(const vector_t* a, const vector_t* b) {
  */
 vector_t* vector_cross_product(const vector_t* a, const vector_t* b) {
     // Ensure both vectors are 3-dimensional.
-    if (a->dimensions != 3 || b->dimensions != 3) {
+    if (a->columns != 3 || b->columns != 3) {
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
             "Cross product is only defined for 3-dimensional vectors.\n");
@@ -665,12 +666,9 @@ vector_t* vector_cross_product(const vector_t* a, const vector_t* b) {
     }
 
     // Calculate the components of the cross product vector.
-    result->elements[0]
-        = a->elements[1] * b->elements[2] - a->elements[2] * b->elements[1];
-    result->elements[1]
-        = a->elements[2] * b->elements[0] - a->elements[0] * b->elements[2];
-    result->elements[2]
-        = a->elements[0] * b->elements[1] - a->elements[1] * b->elements[0];
+    result->data[0] = a->data[1] * b->data[2] - a->data[2] * b->data[1];
+    result->data[1] = a->data[2] * b->data[0] - a->data[0] * b->data[2];
+    result->data[2] = a->data[0] * b->data[1] - a->data[1] * b->data[0];
 
     return result;
 }
@@ -693,7 +691,7 @@ vector_t* vector_cross_product(const vector_t* a, const vector_t* b) {
  * @return A pointer to the vector in cartesian coordinates
  */
 vector_t* vector_polar_to_cartesian(const vector_t* polar_vector) {
-    if (NULL == polar_vector || polar_vector->dimensions != 2) {
+    if (NULL == polar_vector || polar_vector->columns != 2) {
         return NULL; // Return NULL if input is invalid
     }
 
@@ -704,11 +702,11 @@ vector_t* vector_polar_to_cartesian(const vector_t* polar_vector) {
 
     // radii/radius/ray all seem equivalently apropos
     // perhaps ray is best suited?
-    float r     = polar_vector->elements[0];
-    float theta = polar_vector->elements[1];
+    float r     = polar_vector->data[0];
+    float theta = polar_vector->data[1];
 
-    cartesian_vector->elements[0] = r * cosf(theta); // x = r * cos(θ)
-    cartesian_vector->elements[1] = r * sinf(theta); // y = r * sin(θ)
+    cartesian_vector->data[0] = r * cosf(theta); // x = r * cos(θ)
+    cartesian_vector->data[1] = r * sinf(theta); // y = r * sin(θ)
 
     return cartesian_vector;
 }
@@ -726,7 +724,7 @@ vector_t* vector_polar_to_cartesian(const vector_t* polar_vector) {
  * @return A pointer to the vector in polar coordinates
  */
 vector_t* vector_cartesian_to_polar(const vector_t* cartesian_vector) {
-    if (NULL == cartesian_vector || cartesian_vector->dimensions != 2) {
+    if (NULL == cartesian_vector || cartesian_vector->columns != 2) {
         return NULL; // Return NULL if input is invalid
     }
 
@@ -735,11 +733,11 @@ vector_t* vector_cartesian_to_polar(const vector_t* cartesian_vector) {
         return NULL; // Return NULL if memory allocation fails
     }
 
-    float x = cartesian_vector->elements[0];
-    float y = cartesian_vector->elements[1];
+    float x = cartesian_vector->data[0];
+    float y = cartesian_vector->data[1];
 
-    polar_vector->elements[0] = sqrtf(x * x + y * y); // r = √(x^2 + y^2)
-    polar_vector->elements[1] = atan2f(y, x);         // θ = atan (y, x)
+    polar_vector->data[0] = sqrtf(x * x + y * y); // r = √(x^2 + y^2)
+    polar_vector->data[1] = atan2f(y, x);         // θ = atan (y, x)
 
     return polar_vector;
 }
