@@ -30,8 +30,8 @@ matrix_t* matrix_create(const size_t rows, const size_t columns) {
     }
 
     // Allocate a single block of memory for the matrix elements
-    matrix->elements = (float*) malloc(rows * columns * sizeof(float));
-    if (NULL == matrix->elements) {
+    matrix->data = (float*) malloc(rows * columns * sizeof(float));
+    if (NULL == matrix->data) {
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
             "Failed to allocate memory for matrix elements.\n");
@@ -40,7 +40,7 @@ matrix_t* matrix_create(const size_t rows, const size_t columns) {
     }
 
     // Initialize all elements to zero
-    memset(matrix->elements, 0, rows * columns * sizeof(float));
+    memset(matrix->data, 0, rows * columns * sizeof(float));
 
     matrix->rows    = rows;
     matrix->columns = columns;
@@ -54,8 +54,8 @@ void matrix_free(matrix_t* matrix) {
         return;
     }
 
-    if (matrix->elements) {
-        free(matrix->elements);
+    if (matrix->data) {
+        free(matrix->data);
     }
 
     free(matrix);
@@ -64,13 +64,13 @@ void matrix_free(matrix_t* matrix) {
 float matrix_get_element(
     const matrix_t* matrix, const size_t row, const size_t column
 ) {
-    return matrix->elements[row * matrix->columns + column];
+    return matrix->data[row * matrix->columns + column];
 }
 
 void matrix_set_element(
     matrix_t* matrix, const size_t row, const size_t column, const float value
 ) {
-    matrix->elements[row * matrix->columns + column] = value;
+    matrix->data[row * matrix->columns + column] = value;
 }
 
 size_t matrix_elements(const matrix_t* matrix) {
@@ -79,7 +79,7 @@ size_t matrix_elements(const matrix_t* matrix) {
 
 bool matrix_is_zero(const matrix_t* matrix) {
     for (size_t i = 0; i < matrix->rows * matrix->columns; i++) {
-        if (matrix->elements[i] != 0.0f) {
+        if (matrix->data[i] != 0.0f) {
             return false;
         }
     }
@@ -101,7 +101,7 @@ bool matrix_is_identity(const matrix_t* matrix) {
 
     for (size_t i = 0; i < matrix->rows; i++) {
         for (size_t j = 0; j < matrix->columns; j++) {
-            float value = matrix->elements[i * matrix->columns + j];
+            float value = matrix->data[i * matrix->columns + j];
             if ((i == j && value != 1.0f) || (i != j && value != 0.0f)) {
                 return false;
             }
