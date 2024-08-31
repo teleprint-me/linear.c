@@ -22,9 +22,14 @@ typedef struct {
     vector_t* result;
     size_t    begin;
     size_t    end;
+    pthread_t id;
 } thread_data_t;
 
-// Function for thread to execute
+/**
+ * @brief Thread Function: Write a function that each thread will execute. This
+ * function should accept a structure containing the chunk of data and the
+ * operation to perform.
+ */
 void* thread_vector_add(void* arg) {
     thread_data_t* data = (thread_data_t*) arg;
     for (size_t i = data->begin; i < data->end; ++i) {
@@ -39,44 +44,58 @@ int main() {
     vector_t a, b, result;
     a.columns = b.columns = result.columns = columns;
 
-    // Allocate memory
-    a.data      = (float*) malloc(columns * sizeof(float));
-    b.data      = (float*) malloc(columns * sizeof(float));
-    result.data = (float*) malloc(columns * sizeof(float));
+    /**
+     * Allocate memory
+     *
+     * @note vectors are zero initialized upon creation. null is returned upon
+     * failure.
+     */
+    a.data      = vector_create(columns);
+    b.data      = vector_create(columns);
+    result.data = vector_create(columns);
 
     // Initialize vectors with dummy data
     for (size_t i = 0; i < columns; ++i) {
-        a.data[i] = (float) i;
-        b.data[i] = (float) (i * 2);
+        a.data[i] = (float) (i + 1);       // shift by 1
+        b.data[i] = (float) ((i + 1) * 2); // shift by 1, then double
     }
 
     pthread_t     threads[NUM_THREADS];
     thread_data_t thread_data[NUM_THREADS];
-    size_t        chunk_size = columns / NUM_THREADS;
 
-    // Create threads
+    /**
+     * @brief Divide the Data into Chunks: Split the large vector into smaller
+     * chunks. Each thread will handle one chunk, allowing the workload to be
+     * distributed evenly.
+     */
+    size_t chunk_size = columns / NUM_THREADS;
+
     for (size_t i = 0; i < NUM_THREADS; ++i) {
+        thread_data[i].id     = i;
         thread_data[i].a      = &a;
         thread_data[i].b      = &b;
         thread_data[i].result = &result;
         thread_data[i].begin  = i * chunk_size;
         thread_data[i].end
             = (i == NUM_THREADS - 1) ? columns : (i + 1) * chunk_size;
-
         pthread_create(
             &threads[i], NULL, thread_vector_add, (void*) &thread_data[i]
         );
     }
 
-    // Wait for threads to complete
+    /**
+     * @brief Create a Thread Pool: Use a fixed number of threads that wait for
+     * tasks to execute. This approach can help manage resources efficiently
+     * without the overhead of creating and destroying threads repeatedly.
+     */
     for (size_t i = 0; i < NUM_THREADS; ++i) {
         pthread_join(threads[i], NULL);
     }
 
     // Cleanup
-    free(a.data);
-    free(b.data);
-    free(result.data);
+    vector_free(a.data);
+    vector_free(b.data);
+    vector_free(result.data);
 
     printf("Vector addition complete.\n");
     return 0;
