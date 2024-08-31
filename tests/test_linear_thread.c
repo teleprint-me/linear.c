@@ -5,6 +5,14 @@
  *
  * @note keep fixtures and related tests as simple as reasonably possible.
  *       The simpler, the better.
+ *
+ * Manual Build Instructions:
+ *     cmake -B build -DCMAKE_BUILD_TYPE=Debug
+ *     cmake --build build --config Debug -j $(nproc)
+ *     gcc -o vmt src/vector.c tests/test_linear_thread.c -lpthread -lm \
+ *         -I./include -I./mods/logger/include -L./build/lib -llogger
+ * Manual Run Instruction:
+ *     LD_LIBRARY_PATH=build/lib/ ./vmt
  */
 
 #include "vector.h"
@@ -26,23 +34,24 @@ typedef struct {
 } thread_data_t;
 
 /**
- * @brief Thread Function: Write a function that each thread will execute. This
- * function should accept a structure containing the chunk of data and the
- * operation to perform.
+ * @brief Thread Function: Performs vector addition on a specific chunk of
+ * data. Each thread will execute this function and handle its assigned portion
+ * of the vectors.
+ *
+ * @param arg Pointer to a thread_data_t structure containing the data chunk
+ *            and operation details.
  */
 void* thread_vector_add(void* arg) {
     thread_data_t* data = (thread_data_t*) arg;
     for (size_t i = data->begin; i < data->end; ++i) {
-        data->result->data[i] = data->a->data[i] + data->b->data[i];
+        data->result->data[i] = scalar_add(data->a->data[i], data->b->data[i]);
     }
     return NULL;
 }
 
 int main() {
     // Hypothetical large vector sizes
-    size_t   columns = 1000000; // number of dimensions
-    vector_t a, b, result;
-    a.columns = b.columns = result.columns = columns;
+    size_t columns = 1000000; // number of dimensions
 
     /**
      * Allocate memory
@@ -50,14 +59,14 @@ int main() {
      * @note vectors are zero initialized upon creation. null is returned upon
      * failure.
      */
-    a.data      = vector_create(columns);
-    b.data      = vector_create(columns);
-    result.data = vector_create(columns);
+    vector_t* a      = vector_create(columns);
+    vector_t* b      = vector_create(columns);
+    vector_t* result = vector_create(columns);
 
     // Initialize vectors with dummy data
     for (size_t i = 0; i < columns; ++i) {
-        a.data[i] = (float) (i + 1);       // shift by 1
-        b.data[i] = (float) ((i + 1) * 2); // shift by 1, then double
+        a->data[i] = (float) (i + 1);       // shift by 1
+        b->data[i] = (float) ((i + 1) * 2); // shift by 1, then double
     }
 
     pthread_t     threads[NUM_THREADS];
@@ -69,12 +78,11 @@ int main() {
      * distributed evenly.
      */
     size_t chunk_size = columns / NUM_THREADS;
-
     for (size_t i = 0; i < NUM_THREADS; ++i) {
         thread_data[i].id     = i;
-        thread_data[i].a      = &a;
-        thread_data[i].b      = &b;
-        thread_data[i].result = &result;
+        thread_data[i].a      = a;
+        thread_data[i].b      = b;
+        thread_data[i].result = result;
         thread_data[i].begin  = i * chunk_size;
         thread_data[i].end
             = (i == NUM_THREADS - 1) ? columns : (i + 1) * chunk_size;
@@ -93,9 +101,9 @@ int main() {
     }
 
     // Cleanup
-    vector_free(a.data);
-    vector_free(b.data);
-    vector_free(result.data);
+    vector_free(a);
+    vector_free(b);
+    vector_free(result);
 
     printf("Vector addition complete.\n");
     return 0;
