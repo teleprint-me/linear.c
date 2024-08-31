@@ -8,7 +8,7 @@
  */
 
 #include "logger.h"
-#include "vector.h"
+#include "matrix.h"
 
 int main(void) {
     return 0; // @todo
