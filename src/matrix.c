@@ -39,8 +39,17 @@ matrix_t* matrix_create(const size_t rows, const size_t columns) {
         return NULL;
     }
 
-    // Initialize all elements to zero
-    memset(matrix->data, 0, rows * columns * sizeof(float));
+    /**
+     * Initialize all elements to zero
+     *
+     * @note memset may be optimized away (under the as-if rules) if the object
+     *       modified by this function is not accessed again for the rest of
+     *       its lifetime (e.g., gcc bug 8537). For this reason, we do not
+     *       employ its use here.
+     */
+    for (size_t i = 0; i < rows * columns; i++) {
+        matrix->data[i] = 0.0f;
+    }
 
     matrix->rows    = rows;
     matrix->columns = columns;
