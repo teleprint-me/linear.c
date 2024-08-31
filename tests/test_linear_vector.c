@@ -97,8 +97,8 @@ vector_t* vector_2d_fixture(float x, float y) {
     vector_t*    vector     = vector_create(dimensions);
 
     // set elements with provided coordinates
-    vector->elements[0] = x; // horizontal axis representing the width
-    vector->elements[1] = y; // vertical axis representing the height
+    vector->data[0] = x; // horizontal axis representing the width
+    vector->data[1] = y; // vertical axis representing the height
 
     return vector; // use vector_free(vector) to free the vector object
 }
@@ -120,9 +120,9 @@ vector_t* vector_3d_fixture(float x, float y, float z) {
     vector_t*    vector     = vector_create(dimensions);
 
     // set elements with provided coordinates
-    vector->elements[0] = x; // horizontal axis representing the width
-    vector->elements[1] = y; // vertical axis representing the height
-    vector->elements[2] = z; // orthogonal axis representing the depth
+    vector->data[0] = x; // horizontal axis representing the width
+    vector->data[1] = y; // vertical axis representing the height
+    vector->data[2] = z; // orthogonal axis representing the depth
 
     return vector; // use vector_free(vector) to free the vector object
 }
@@ -149,27 +149,27 @@ bool test_vector_create(void) {
             "Failed to allocate memory for a %zu-dimensional vector.\n",
             dimensions);
         result = false;
-    } else if (NULL == vector->elements) {
+    } else if (NULL == vector->data) {
         // vector_create failed to allocate memory for elements
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
-            "Failed to allocate %zu bytes to vector->elements.\n",
+            "Failed to allocate %zu bytes to vector->data.\n",
             dimensions * sizeof(float));
         result = false;
-    } else if (dimensions != vector->dimensions) {
+    } else if (dimensions != vector->columns) {
         // vector_create failed to correctly set the vector dimensions
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
             "Expected vector_t to have dimensions(%zu), got "
-            "vector->dimensions(%zu)"
+            "vector->columns(%zu)"
             " instead.\n",
             dimensions,
-            vector->dimensions);
+            vector->columns);
         result = false;
     } else {
         // Check if the elements are initialized with zeros
         for (size_t i = 0; i < dimensions; ++i) {
-            assert(vector->elements[i] == 0.0f);
+            assert(vector->data[i] == 0.0f);
         }
 
         // Correctly destroy the vector and free its memory
@@ -198,9 +198,9 @@ bool test_vector_create(void) {
 bool test_vector_deep_copy(void) {
     bool result = true; // test result status
 
-    // original->elements[0] = 1
-    // original->elements[1] = 3
-    // original->dimensions  = 2
+    // original->data[0] = 1
+    // original->data[1] = 3
+    // original->columns  = 2
     vector_t* original = vector_2d_fixture(1, 3);
 
     // vector_deep_copy takes a pointer to a vector_t object
@@ -212,25 +212,25 @@ bool test_vector_deep_copy(void) {
             LOG_LEVEL_ERROR,
             "Failed to allocate memory for deep copy of the vector.\n");
         result = false;
-    } else if (deep_copy->elements[0] != 1 || deep_copy->elements[1] != 3) {
+    } else if (deep_copy->data[0] != 1 || deep_copy->data[1] != 3) {
         // Elements do not match original vector's elements
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
             "Deep copy elements do not match original vector's elements.\n");
         result = false;
-    } else if (original->dimensions != deep_copy->dimensions) {
+    } else if (original->columns != deep_copy->columns) {
         // Failed to correctly set the vector dimensions
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
             "Expected vector_t to have dimensions(%zu), got "
-            "deep_copy->dimensions(%zu) instead.\n",
-            original->dimensions,
-            deep_copy->dimensions);
+            "deep_copy->columns(%zu) instead.\n",
+            original->columns,
+            deep_copy->columns);
         result = false;
     } else {
         // Ensure deep copy is indeed a separate memory allocation
-        original->elements[0] = 2; // Modify original vector
-        if (deep_copy->elements[0] == 2) {
+        original->data[0] = 2; // Modify original vector
+        if (deep_copy->data[0] == 2) {
             LOG(&global_logger,
                 LOG_LEVEL_ERROR,
                 "Deep copy shares memory with original vector. "
@@ -268,26 +268,26 @@ bool test_vector_shallow_copy(void) {
     vector_t* shallow_copy = vector_shallow_copy(original);
 
     // Check if both vectors share the same elements array
-    if (original->elements != shallow_copy->elements) {
+    if (original->data != shallow_copy->data) {
         result = false;
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
             "Elements array not shared between original and shallow copy.\n");
-    } else if (original->dimensions != shallow_copy->dimensions) {
+    } else if (original->columns != shallow_copy->columns) {
         // Check if both vectors share the same dimensions
         result = false;
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
             "Expected vector_t to have dimensions(%zu), got "
-            "shallow_copy->dimensions(%zu) instead.\n",
-            original->dimensions,
-            shallow_copy->dimensions);
+            "shallow_copy->columns(%zu) instead.\n",
+            original->columns,
+            shallow_copy->columns);
     }
 
     // Modify the original vector and check if changes reflect in the shallow
     // copy
-    original->elements[0] = 30; // Change the value
-    if (shallow_copy->elements[0] != 30) {
+    original->data[0] = 30; // Change the value
+    if (shallow_copy->data[0] != 30) {
         result = false;
         LOG(&global_logger,
             LOG_LEVEL_ERROR,
@@ -372,8 +372,8 @@ bool test_vector_magnitude(void) {
         LOG(&global_logger, LOG_LEVEL_ERROR, "Failed to create vector.\n");
     } else {
         // Setting vector elements to (3, 4)
-        vector->elements[0] = 3;
-        vector->elements[1] = 4;
+        vector->data[0] = 3;
+        vector->data[1] = 4;
 
         // Calculate the magnitude
         float magnitude = vector_magnitude(vector);
@@ -442,8 +442,8 @@ bool test_vector_vector_elementwise_operation(
 
     // Initialize vectors a and b
     for (size_t i = 0; i < 3; ++i) {
-        a->elements[i] = 1.0f;
-        b->elements[i] = 2.0f;
+        a->data[i] = 1.0f;
+        b->data[i] = 2.0f;
     }
 
     c           = operation_elementwise(a, b);
@@ -452,16 +452,16 @@ bool test_vector_vector_elementwise_operation(
         result = false;
     } else {
         for (size_t i = 0; i < 3; ++i) {
-            float expected = operation(a->elements[i], b->elements[i]);
-            if (c->elements[i] != expected) {
+            float expected = operation(a->data[i], b->data[i]);
+            if (c->data[i] != expected) {
                 LOG(&global_logger,
                     LOG_LEVEL_ERROR,
-                    "%s failed at index %zu with c->elements[%zu] = %f, "
+                    "%s failed at index %zu with c->data[%zu] = %f, "
                     "expected %f",
                     operation_label,
                     i,
                     i,
-                    c->elements[i],
+                    c->data[i],
                     expected);
                 result = false;
                 break;
