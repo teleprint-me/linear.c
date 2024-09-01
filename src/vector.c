@@ -64,7 +64,7 @@ vector_t* vector_create(const size_t columns) {
 }
 
 void vector_free(vector_t* vector) {
-    if (vector == NULL) {
+    if (NULL == vector) {
         return;
     }
 
