@@ -21,8 +21,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define NUM_THREADS 4 // Number of threads to use
+#include <sys/sysinfo.h>
 
 // Structure to pass data to threads
 typedef struct {
@@ -110,6 +109,12 @@ vector_t* vector_vector_add_mt(
 }
 
 int main() {
+    printf("Loading...\n");
+
+    // @note See `man 3 get_nprocs` for more information
+    int available_threads = get_nprocs();
+    printf("Using %d threads...\n", available_threads);
+
     /**
      * @brief Hypothetical large vector sizes
      *
@@ -143,6 +148,8 @@ int main() {
     vector_t* a = vector_create(columns);
     vector_t* b = vector_create(columns);
 
+    printf("Initializing...\n");
+
     /**
      * @brief Initialize vectors with dummy data
      *
@@ -155,7 +162,8 @@ int main() {
         b->data[i]  = (float) (shift * 2); // shift by 1, then double
     }
 
-    vector_t* result = vector_vector_add_mt(a, b, NUM_THREADS);
+    printf("Computing...\n");
+    vector_t* result = vector_vector_add_mt(a, b, available_threads);
 
     // Cleanup
     vector_free(a);
