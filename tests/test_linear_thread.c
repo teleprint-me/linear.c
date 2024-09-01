@@ -110,22 +110,49 @@ vector_t* vector_vector_add_mt(
 }
 
 int main() {
-    // Hypothetical large vector sizes
-    size_t columns = 1000000; // number of dimensions
+    /**
+     * @brief Hypothetical large vector sizes
+     *
+     * @note A large number of dimensions consumes a large amount of RAM in
+     * kind. For example, one-billion elements will allocate roughly 7GB of
+     * RAM. Floats are about 4 bytes, plus size_t which is unsigned long, plus
+     * the structure itself. So, (4 * 1,000,000,000) + 4 + 4, if my math is
+     * right. Loading time increases, but computation is parallelized, speeding
+     * up computation as a result.
+     *
+     * $ python
+     * >>> (4 * 1_000_000_000) + 4 + 4 # raw bytes
+     * 4000000008
+     * >>> ((4 * 1_000_000_000) + 4 + 4) / 1024 # kilobytes
+     * 3906250.0078125
+     * >>> ((4 * 1_000_000_000) + 4 + 4) / 1024 / 1024 # megabytes
+     * 3814.6972732543945
+     * >>> ((4 * 1_000_000_000) + 4 + 4) / 1024 / 1024 / 1024 # gigabytes
+     * 3.7252903059124947
+     *
+     * Yeah, my math is off here. RAM usage maxes out at about 11.2 GB
+     */
+    size_t columns = 1000000000; // number of dimensions
 
     /**
      * Allocate memory
      *
-     * @note vectors are zero initialized upon creation. null is returned upon
+     * @note vectors are zero initialized upon creation. NULL is returned upon
      * failure.
      */
     vector_t* a = vector_create(columns);
     vector_t* b = vector_create(columns);
 
-    // Initialize vectors with dummy data
+    /**
+     * @brief Initialize vectors with dummy data
+     *
+     * @note This is in linear time, so time complexity grows alongside the
+     * input size.
+     */
     for (size_t i = 0; i < columns; ++i) {
-        a->data[i] = (float) (i + 1);       // shift by 1
-        b->data[i] = (float) ((i + 1) * 2); // shift by 1, then double
+        float shift = i + 1;               // calculate once, uses less RAM
+        a->data[i]  = (float) shift;       // shift by 1
+        b->data[i]  = (float) (shift * 2); // shift by 1, then double
     }
 
     vector_t* result = vector_vector_add_mt(a, b, NUM_THREADS);
