@@ -24,8 +24,43 @@
  * - minimal dependencies (3rd party dependencies are not allowed)
  */
 
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <vulkan/vulkan.h>
 
+// Helper functions for error handling, buffer creation, etc.,
+// should be defined here.
+
 int main(void) {
+    // 1. Initialize Vulkan: Create Vulkan instance
+    VkInstance           instance;
+    VkInstanceCreateInfo createInfo = {};
+    createInfo.sType                = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    createInfo.pNext                = NULL;
+    createInfo.flags                = 0;
+    createInfo.pApplicationInfo     = NULL; // Application info is optional
+
+    VkResult result = vkCreateInstance(&createInfo, NULL, &instance);
+    assert(result == VK_SUCCESS);
+
+    // 2. Select a physical device (GPU) that supports compute operations
+    uint32_t gpuCount = 0;
+    vkEnumeratePhysicalDevices(instance, &gpuCount, NULL);
+    assert(gpuCount > 0);
+
+    VkPhysicalDevice* gpus = malloc(sizeof(VkPhysicalDevice) * gpuCount);
+    vkEnumeratePhysicalDevices(instance, &gpuCount, gpus);
+    VkPhysicalDevice physicalDevice
+        = gpus[0]; // Simplest case: use the first GPU found
+
+    // Additional setup such as checking compute capabilities, creating a
+    // logical device, creating buffers, setting up descriptor sets, writing
+    // shaders, etc.
+
+    // Cleanup
+    vkDestroyInstance(instance, NULL);
+    free(gpus);
+
     return 0;
 }
