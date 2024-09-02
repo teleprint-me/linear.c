@@ -149,6 +149,9 @@ int main() {
     vector_t* b = vector_create(columns);
 
     printf("Initializing...\n");
+    printf("vector is a size of %d bytes\n", sizeof(a));
+    printf("vector->data is a size of %d bytes\n", sizeof(a->data));
+    printf("vector->columns is a size of %d bytes\n", sizeof(a->columns));
 
     /**
      * @brief Initialize vectors with dummy data
