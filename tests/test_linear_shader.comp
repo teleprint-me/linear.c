@@ -1,0 +1,18 @@
+/**
+ * @file tests/test_linear_shader.comp
+ *
+ * @note glslangValidator is a symlink to glslang
+ * compute shaders require the the .comp suffix
+ * to compile, we use:
+ *     glslang -V tests/test_linear_shader.comp -o shaders.spv
+ * where shaders.spv is the output binary
+ */
+#version 450
+layout(set = 0, binding = 0) buffer InputBufferA { float a[]; };
+layout(set = 0, binding = 1) buffer InputBufferB { float b[]; };
+layout(set = 0, binding = 2) buffer OutputBuffer { float result[]; };
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    result[idx] = a[idx] + b[idx];
+}
