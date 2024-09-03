@@ -29,11 +29,12 @@
 int main(void) {
     // 1. Initialize Vulkan: Create Vulkan instance
     VkInstance           instance;
-    VkInstanceCreateInfo createInfo = {};
-    createInfo.sType                = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-    createInfo.pNext                = NULL;
-    createInfo.flags                = 0;
-    createInfo.pApplicationInfo     = NULL; // Application info is optional
+    VkInstanceCreateInfo createInfo = {
+        .sType            = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+        .pNext            = NULL,
+        .flags            = 0,
+        .pApplicationInfo = NULL, // Application info is optional
+    };
 
     VkResult result = vkCreateInstance(&createInfo, NULL, &instance);
     assert(result == VK_SUCCESS);
@@ -45,8 +46,8 @@ int main(void) {
 
     VkPhysicalDevice* gpus = malloc(sizeof(VkPhysicalDevice) * gpuCount);
     vkEnumeratePhysicalDevices(instance, &gpuCount, gpus);
-    VkPhysicalDevice physicalDevice
-        = gpus[0]; // Simplest case: use the first GPU found
+    // Simplest case: use the first GPU found
+    VkPhysicalDevice physicalDevice = gpus[0];
 
     // Additional setup such as checking compute capabilities, creating a
     // logical device, creating buffers, setting up descriptor sets, writing
