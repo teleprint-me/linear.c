@@ -27,6 +27,11 @@ foreach(MOD IN LISTS MODULES)
     list(APPEND LIB_HEADERS "include/${MOD}.h")
 endforeach()
 
+if (LINEAR_VULKAN)
+    find_package(Vulkan COMPONENTS glslc REQUIRED)
+    add_subdirectory(shaders)
+endif()
+
 # Add the library using the collected sources
 add_library(linear ${LIB_SOURCES})
 
