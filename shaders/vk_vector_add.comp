@@ -1,13 +1,16 @@
 /**
- * @file tests/test_linear_shader.comp
+ * @file shaders/vk_vector_add.comp
  *
- * @note glslangValidator is a symlink to glslang
- * compute shaders require the the .comp suffix
- * to compile, we use:
- *     glslang -V tests/test_linear_shader.comp -o shaders.spv
- * where shaders.spv is the output binary
+ * @note Use glslang to build
+ *
+ *     glslang -V shaders/vk_vector_add.comp -o vk_vector_add.spv
+ *
+ * - input: shaders/vk_vector_add.comp
+ * - output: vk_vector_add.spv
  */
+
 #version 450
+
 layout(set = 0, binding = 0) buffer InputBufferA { float a[]; };
 layout(set = 0, binding = 1) buffer InputBufferB { float b[]; };
 layout(set = 0, binding = 2) buffer OutputBuffer { float result[]; };
