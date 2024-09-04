@@ -5,8 +5,12 @@
  *
  * @brief A simple and easy-to-use Vulkan API in C
  *
+ * @ref https://docs.vulkan.org/
+ *
  * Only pure C is used with minimal dependencies on external libraries.
  */
+
+#include <assert.h>
 
 #include <vulkan/vulkan.h>
 
@@ -35,4 +39,31 @@ VkResult vk_linear_create_instance(
     VkResult result = vkCreateInstance(&pCreateInfo, NULL, pInstance);
     assert(result == VK_SUCCESS);
     return result;
+}
+
+// Helper function to find a compute queue family index
+uint32_t
+vk_linear_find_compute_queue_family_index(VkPhysicalDevice physicalDevice) {
+    uint32_t pQueueFamilyPropertyCount;
+    vkGetPhysicalDeviceQueueFamilyProperties(
+        physicalDevice, &pQueueFamilyPropertyCount, NULL
+    );
+
+    VkQueueFamilyProperties* pQueueFamilyProperties
+        = malloc(sizeof(VkQueueFamilyProperties) * pQueueFamilyPropertyCount);
+
+    vkGetPhysicalDeviceQueueFamilyProperties(
+        physicalDevice, &pQueueFamilyPropertyCount, pQueueFamilyProperties
+    );
+
+    for (uint32_t i = 0; i < pQueueFamilyPropertyCount; i++) {
+        if (pQueueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) {
+            free(pQueueFamilyProperties);
+            return i;
+        }
+    }
+
+    free(pQueueFamilyProperties);
+    assert(0 && "No compute queue family found.");
+    return -1;
 }

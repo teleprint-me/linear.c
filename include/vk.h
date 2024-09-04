@@ -19,4 +19,7 @@ VkResult vk_linear_create_instance(
     const VkApplicationInfo* pApplicationInfo, VkInstance* pInstance
 );
 
+uint32_t
+vk_linear_find_compute_queue_family_index(VkPhysicalDevice physicalDevice);
+
 #endif // LINEAR_VK_H
