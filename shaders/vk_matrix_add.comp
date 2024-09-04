@@ -1,0 +1,19 @@
+/**
+ * Copyright © 2024 Austin Berrio
+ *
+ * @file shaders/vk_matrix_add.comp
+ */
+
+#version 450
+
+layout(set = 0, binding = 0) buffer InputBufferA { float a[]; };
+layout(set = 0, binding = 1) buffer InputBufferB { float b[]; };
+layout(set = 0, binding = 2) buffer OutputBuffer { float result[]; };
+
+void main() {
+    uint x = gl_GlobalInvocationID.x;
+    uint y = gl_GlobalInvocationID.y;
+
+    result[x] = a[x] + b[x];
+    result[y] = a[y] + b[y];
+}

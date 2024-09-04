@@ -1,4 +1,6 @@
 /**
+ * Copyright © 2024 Austin Berrio
+ *
  * @file shaders/vk_vector_add.comp
  *
  * @note Use glslang to build
