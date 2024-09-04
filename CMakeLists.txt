@@ -7,6 +7,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+option(LINEAR_VULKAN "Enable Vulkan support" OFF)
 
 # Setup submodule, module, and test names
 set(SUBMODULES logger float_is_close)
@@ -29,7 +30,6 @@ endforeach()
 
 if (LINEAR_VULKAN)
     find_package(Vulkan COMPONENTS glslc REQUIRED)
-    add_subdirectory(shaders)
 endif()
 
 # Add the library using the collected sources
