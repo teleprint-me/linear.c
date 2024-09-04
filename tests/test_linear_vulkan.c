@@ -15,10 +15,14 @@
  * be written from scratch.
  *
  * Manual Build:
- *     gcc -o test_linear_vulkan test_linear_vulkan.c -lvulkan
+ *     gcc -o test_linear_vulkan \
+ *         src/vk.c tests/test_linear_vulkan.c \
+ *         -lvulkan -I./include
  * Manual Run:
  *     ./test_linear_vulkan
  */
+
+#include "vk.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -26,57 +30,6 @@
 #include <string.h>
 
 #include <vulkan/vulkan.h>
-
-VkApplicationInfo vk_linear_application_info(const char* pApplicationName) {
-    VkApplicationInfo appInfo = {
-        .sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-        .pApplicationName   = pApplicationName,
-        .applicationVersion = VK_MAKE_API_VERSION(0, 1, 0, 0),
-        .pEngineName        = pApplicationName,
-        .engineVersion      = VK_MAKE_API_VERSION(0, 1, 0, 0),
-        .apiVersion         = VK_API_VERSION_1_0,
-    };
-    return appInfo;
-}
-
-VkResult vk_linear_create_instance(
-    const VkApplicationInfo* pApplicationInfo, VkInstance* pInstance
-) {
-    VkInstanceCreateInfo createInfo = {
-        .sType            = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-        .pNext            = NULL,
-        .flags            = 0,
-        .pApplicationInfo = pApplicationInfo,
-    };
-
-    VkResult result = vkCreateInstance(&createInfo, NULL, pInstance);
-    assert(result == VK_SUCCESS);
-    return result;
-}
-
-// Helper functions to find a compute queue family index
-uint32_t findComputeQueueFamilyIndex(VkPhysicalDevice physicalDevice) {
-    uint32_t queueFamilyCount;
-    vkGetPhysicalDeviceQueueFamilyProperties(
-        physicalDevice, &queueFamilyCount, NULL
-    );
-    VkQueueFamilyProperties* queueFamilies
-        = malloc(sizeof(VkQueueFamilyProperties) * queueFamilyCount);
-    vkGetPhysicalDeviceQueueFamilyProperties(
-        physicalDevice, &queueFamilyCount, queueFamilies
-    );
-
-    for (uint32_t i = 0; i < queueFamilyCount; i++) {
-        if (queueFamilies[i].queueFlags & VK_QUEUE_COMPUTE_BIT) {
-            free(queueFamilies);
-            return i;
-        }
-    }
-
-    free(queueFamilies);
-    assert(0 && "No compute queue family found.");
-    return -1;
-}
 
 int main(void) {
     // 1. Initialize Vulkan: Create Vulkan instance
@@ -106,7 +59,7 @@ int main(void) {
 
     // 3. Create a logical device with a compute queue
     uint32_t computeQueueFamilyIndex
-        = findComputeQueueFamilyIndex(physicalDevice);
+        = vk_linear_find_compute_queue_family_index(physicalDevice);
 
     float                   queuePriority = 1.0f;
     VkDeviceQueueCreateInfo queueCreateInfo
