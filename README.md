@@ -16,15 +16,45 @@ A lightweight linear algebra library written in pure C.
 - GPU acceleration with Vulkan.
 - Half-precision (16-bit) floating-point support.
 - Brain Floating Point (bfloat16) support.
-- Signal processing for:
+- Signal processing with:
   - 8-bit integer precision.
   - 4-bit integer precision.
 
-## Build Instructions
+## Getting Started
 
-### Automated Build
+### Clone the Repository
 
-To use the automated build script:
+To clone this repository along with its submodules, run:
+
+```sh
+git clone --recurse-submodules -j$(nproc) \
+    https://github.com/teleprint-me/linear.c linear
+cd linear
+```
+
+### Build Instructions
+
+#### 1. Build Shaders (for Vulkan builds)
+
+If you plan to use GPU acceleration, you need to compile the shaders first:
+
+1. Enable execution permissions for the shader build script:
+
+    ```sh
+    chmod +x build_shaders.sh
+    ```
+
+2. Run the script to compile shaders from `.comp` to `.spv`:
+
+    ```sh
+    ./build_shaders.sh
+    ```
+
+Compiled shaders will be located in the `shaders/compiled` directory.
+
+#### 2. Automated Build
+
+To automate the build, use the provided script:
 
 1. Enable execution permissions:
 
@@ -38,9 +68,9 @@ To use the automated build script:
     ./auto_build.sh
     ```
 
-### Manual Build
+#### 3. Manual Build
 
-To manually build the project, follow these steps:
+To manually build the project:
 
 1. **CPU-only Build:**
 
