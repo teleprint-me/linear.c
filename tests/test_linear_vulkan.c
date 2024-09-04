@@ -93,10 +93,27 @@ int main(void) {
     float b[4] = {5.0f, 6.0f, 7.0f, 8.0f};
     float resultVector[4];
 
-    // Here you would allocate and bind Vulkan buffers, such as for
-    // InputBufferA, InputBufferB, and OutputBuffer. For brevity, this is left
-    // as comments since it's detailed and specific to the Vulkan memory
-    // allocation.
+    VkDeviceSize bufferSize = sizeof(float) * 4;
+    VkBuffer     bufferA    = vk_linear_buffer_create(
+        device, bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT
+    );
+    VkBuffer bufferB = vk_linear_buffer_create(
+        device, bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT
+    );
+    VkBuffer bufferResult = vk_linear_buffer_create(
+        device, bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT
+    );
+
+    VkDeviceMemory memoryA
+        = vk_linear_buffer_allocate(device, bufferA, physicalDevice);
+    VkDeviceMemory memoryB
+        = vk_linear_buffer_allocate(device, bufferB, physicalDevice);
+    VkDeviceMemory memoryResult
+        = vk_linear_buffer_allocate(device, bufferResult, physicalDevice);
+
+    // Copy data to buffers
+    vk_linear_buffer_copy(device, memoryA, a, bufferSize);
+    vk_linear_buffer_copy(device, memoryB, b, bufferSize);
 
     // 6. Create a compute pipeline
     // This includes loading the SPIR-V shader, creating shader modules, and
@@ -112,6 +129,12 @@ int main(void) {
     // 10. Retrieve results from GPU
 
     // Cleanup Vulkan resources
+    vkDestroyBuffer(device, bufferA, NULL);
+    vkDestroyBuffer(device, bufferB, NULL);
+    vkDestroyBuffer(device, bufferResult, NULL);
+    vkFreeMemory(device, memoryA, NULL);
+    vkFreeMemory(device, memoryB, NULL);
+    vkFreeMemory(device, memoryResult, NULL);
     vkDestroyDevice(device, NULL);
     vkDestroyInstance(instance, NULL);
     free(gpus);
