@@ -25,35 +25,28 @@
 
 #include <vulkan/vulkan.h>
 
-VkApplicationInfo* vk_linear_instance() {
-    /**
-     * @note docs state that VK_MAKE_VERSION is deprecated, but
-     * VK_MAKE_API_VERSION has a variant parameter that is poorly defined. docs
-     * state older apis are indefinitely supported which motivates me to use
-     * the original api. regardless, unsure of whether to define the version
-     * according to vulkan version or app version.
-     */
-    VkApplicationInfo pApplicationInfo = {
-        .sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-        .pApplicationName   = NULL, // idk?
-        .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
-        .pEngineName        = "linear", // is this right?
-        .engineVersion      = VK_MAKE_VERSION(1, 0, 0),
-        .apiVersion         = VK_API_VERSION_1_0,
-    };
-    return &pApplicationInfo;
+VkApplicationInfo* vk_linear_application_info(const char* pApplicationName) {
+    VkApplicationInfo* pApplicationInfo
+        = (VkApplicationInfo*) malloc(sizeof(VkApplicationInfo));
+    pApplicationInfo->sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    pApplicationInfo->pApplicationName   = pApplicationName;
+    pApplicationInfo->applicationVersion = VK_MAKE_API_VERSION(0, 1, 0, 0);
+    pApplicationInfo->pEngineName        = pApplicationName;
+    pApplicationInfo->engineVersion      = VK_MAKE_API_VERSION(0, 1, 0, 0);
+    pApplicationInfo->apiVersion         = VK_API_VERSION_1_0;
+    return pApplicationInfo;
 }
 
-VkResult vk_linear_initialize(
-    VkApplicationInfo* pApplicationInfo, VkInstance instance
+VkResult vk_linear_create_instance(
+    VkApplicationInfo* pApplicationInfo, VkInstance* pInstance
 ) {
     VkInstanceCreateInfo createInfo = {
         .sType            = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pNext            = NULL,
         .flags            = 0,
-        .pApplicationInfo = NULL, // Application info is optional
+        .pApplicationInfo = pApplicationInfo,
     };
-    VkResult result = vkCreateInstance(&createInfo, NULL, &instance);
+    VkResult result = vkCreateInstance(&createInfo, NULL, pInstance);
     assert(result == VK_SUCCESS);
     return result;
 }
