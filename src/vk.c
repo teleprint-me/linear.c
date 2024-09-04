@@ -25,14 +25,14 @@ VkApplicationInfo vk_linear_application_info(const char* pApplicationName) {
 VkResult vk_linear_create_instance(
     const VkApplicationInfo* pApplicationInfo, VkInstance* pInstance
 ) {
-    VkInstanceCreateInfo createInfo = {
+    VkInstanceCreateInfo pCreateInfo = {
         .sType            = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pNext            = NULL,
         .flags            = 0,
         .pApplicationInfo = pApplicationInfo,
     };
 
-    VkResult result = vkCreateInstance(&createInfo, NULL, pInstance);
+    VkResult result = vkCreateInstance(&pCreateInfo, NULL, pInstance);
     assert(result == VK_SUCCESS);
     return result;
 }
