@@ -22,4 +22,16 @@ VkResult vk_linear_create_instance(
 uint32_t
 vk_linear_find_compute_queue_family_index(VkPhysicalDevice physicalDevice);
 
+VkBuffer vk_linear_buffer_create(
+    VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage
+);
+
+VkDeviceMemory vk_linear_buffer_allocate(
+    VkDevice device, VkBuffer buffer, VkPhysicalDevice physicalDevice
+);
+
+void vk_linear_buffer_copy(
+    VkDevice device, VkDeviceMemory memory, const void* data, VkDeviceSize size
+);
+
 #endif // LINEAR_VK_H

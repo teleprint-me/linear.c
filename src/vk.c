@@ -73,3 +73,69 @@ vk_linear_find_compute_queue_family_index(VkPhysicalDevice physicalDevice) {
     assert(0 && "No compute queue family found.");
     return -1;
 }
+
+// Helper function to create a Vulkan buffer
+VkBuffer vk_linear_buffer_create(
+    VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage
+) {
+    VkBufferCreateInfo pCreateInfo = {
+        .sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+        .size        = size,
+        .usage       = usage,
+        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+    };
+
+    VkBuffer pBuffer;
+    VkResult result = vkCreateBuffer(device, &pCreateInfo, NULL, &pBuffer);
+    assert(result == VK_SUCCESS);
+
+    return pBuffer;
+}
+
+// Helper function to allocate memory for a buffer
+VkDeviceMemory vk_linear_buffer_allocate(
+    VkDevice device, VkBuffer buffer, VkPhysicalDevice physicalDevice
+) {
+    VkMemoryRequirements memoryRequirements;
+    vkGetBufferMemoryRequirements(device, buffer, &memoryRequirements);
+
+    VkPhysicalDeviceMemoryProperties memoryProperties;
+    vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
+
+    int memoryTypeIndex = -1;
+    for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; i++) {
+        if ((memoryRequirements.memoryTypeBits & (1 << i))
+            && (memoryProperties.memoryTypes[i].propertyFlags
+                & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)
+            && (memoryProperties.memoryTypes[i].propertyFlags
+                & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+            memoryTypeIndex = i;
+            break;
+        }
+    }
+    assert(memoryTypeIndex != -1);
+
+    VkMemoryAllocateInfo pAllocateInfo = {
+        .sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+        .allocationSize  = memoryRequirements.size,
+        .memoryTypeIndex = memoryTypeIndex,
+    };
+
+    VkDeviceMemory bufferMemory;
+    VkResult       result
+        = vkAllocateMemory(device, &pAllocateInfo, NULL, &bufferMemory);
+    assert(result == VK_SUCCESS);
+
+    vkBindBufferMemory(device, buffer, bufferMemory, 0);
+    return bufferMemory;
+}
+
+// Function to map data to Vulkan buffer memory
+void vk_linear_buffer_copy(
+    VkDevice device, VkDeviceMemory memory, const void* data, VkDeviceSize size
+) {
+    void* mappedMemory;
+    vkMapMemory(device, memory, 0, size, 0, &mappedMemory);
+    memcpy(mappedMemory, data, size);
+    vkUnmapMemory(device, memory);
+}
