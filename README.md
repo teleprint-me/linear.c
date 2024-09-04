@@ -7,11 +7,12 @@ Linear Algebra written in pure C.
 - floating-point comparisons
 - vectors, matrices, and tensors
 - common linear operations
-- cpu and gpu via vulkan
 - support 32-bit (single-precision)
 
 ### todo
 
+- cpu via pthread
+- gpu via vulkan
 - 16-bit (half-precision)
 - 16-bit (bfloat)
 - signal processing
