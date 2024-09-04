@@ -1,66 +1,79 @@
 # linear.c
-Linear Algebra written in pure C.
 
-## feat
+A lightweight linear algebra library written in pure C.
 
-- logging
-- floating-point comparisons
-- vectors, matrices, and tensors
-- common linear operations
-- support 32-bit (single-precision)
+## Features
 
-### todo
+- Logging for debugging and error tracking.
+- Floating-point comparisons.
+- Support for vectors, matrices, and tensors.
+- Common linear algebra operations.
+- Single-precision (32-bit) floating-point support.
 
-- cpu via pthread
-- gpu via vulkan
-- 16-bit (half-precision)
-- 16-bit (bfloat)
-- signal processing
-    - 8-bit (int for k-bit)
-    - 4-bit (int for k-bit)
+## Planned Features
 
-## auto build
+- Multithreading using `pthreads` for CPU computation.
+- GPU acceleration with Vulkan.
+- Half-precision (16-bit) floating-point support.
+- Brain Floating Point (bfloat16) support.
+- Signal processing for:
+  - 8-bit integer precision.
+  - 4-bit integer precision.
 
-### enable execution
+## Build Instructions
 
-```sh
-chmod +x auto_build.sh
-```
+### Automated Build
 
-### run build and tests
+To use the automated build script:
 
-```sh
-# automates building, compiling, and testing
-./auto-build # auto-build -> auto_build.sh
-```
+1. Enable execution permissions:
 
-## manual build
+    ```sh
+    chmod +x auto_build.sh
+    ```
 
-### CPU build
+2. Run the script to build, compile, and test:
 
-```sh
-cmake -B build -DCMAKE_BUILD_TYPE=Debug -DLINEAR_VULKAN=0
-```
+    ```sh
+    ./auto_build.sh
+    ```
 
-### Vulkan build
+### Manual Build
 
-```sh
-cmake -B build -DCMAKE_BUILD_TYPE=Debug -DLINEAR_VULKAN=1
-```
+To manually build the project, follow these steps:
 
-### compile
+1. **CPU-only Build:**
 
-```sh
-cmake --build build --config Debug -j $(nproc)
-```
+    ```sh
+    cmake -B build -DCMAKE_BUILD_TYPE=Debug -DLINEAR_VULKAN=0
+    ```
 
-### test
+2. **Vulkan-accelerated Build:**
 
-```sh
-ctest --rerun-failed --output-on-failure --test-dir build
-```
+    ```sh
+    cmake -B build -DCMAKE_BUILD_TYPE=Debug -DLINEAR_VULKAN=1
+    ```
+
+3. **Compile the Code:**
+
+    ```sh
+    cmake --build build --config Debug -j $(nproc)
+    ```
+
+4. **Run Tests:**
+
+    ```sh
+    ctest --rerun-failed --output-on-failure --test-dir build
+    ```
+
+## Current Status
+
+- **Vectors:** Nearly complete, with most core functionality implemented.
+- **Matrices and Tensors:** Work in progress; API drafts are still being refined.
+- **Data Types:** Currently, only `float` is supported.
+- **Multithreading and GPU Support:** Under development; prototypes and initial drafts are in progress.
+- **Signal Processing:** Not yet implemented; planned for later stages due to its complexity.
 
 ## License
 
-This project is licensed under the AGPL License - see the [LICENSE](LICENSE)
-file for details.
+This project is licensed under the AGPL License. See the [LICENSE](LICENSE) file for details.
