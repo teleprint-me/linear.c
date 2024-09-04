@@ -32,6 +32,14 @@ git clone --recurse-submodules -j$(nproc) \
 cd linear
 ```
 
+### Update Submodules
+
+To ensure all submodules are up to date, run:
+
+```sh
+git submodule update --init --recursive
+```
+
 ### Build Instructions
 
 #### 1. Build Shaders (for Vulkan builds)
