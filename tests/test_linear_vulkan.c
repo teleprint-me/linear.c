@@ -1,4 +1,6 @@
 /**
+ * Copyright © 2024 Austin Berrio
+ *
  * @file tests/test_linear_vulkan.c
  *
  * @note keep fixtures and related tests as simple as reasonably possible.
@@ -25,20 +27,20 @@
 
 #include <vulkan/vulkan.h>
 
-VkApplicationInfo* vk_linear_application_info(const char* pApplicationName) {
-    VkApplicationInfo* pApplicationInfo
-        = (VkApplicationInfo*) malloc(sizeof(VkApplicationInfo));
-    pApplicationInfo->sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    pApplicationInfo->pApplicationName   = pApplicationName;
-    pApplicationInfo->applicationVersion = VK_MAKE_API_VERSION(0, 1, 0, 0);
-    pApplicationInfo->pEngineName        = pApplicationName;
-    pApplicationInfo->engineVersion      = VK_MAKE_API_VERSION(0, 1, 0, 0);
-    pApplicationInfo->apiVersion         = VK_API_VERSION_1_0;
-    return pApplicationInfo;
+VkApplicationInfo vk_linear_application_info(const char* pApplicationName) {
+    VkApplicationInfo appInfo = {
+        .sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+        .pApplicationName   = pApplicationName,
+        .applicationVersion = VK_MAKE_API_VERSION(0, 1, 0, 0),
+        .pEngineName        = pApplicationName,
+        .engineVersion      = VK_MAKE_API_VERSION(0, 1, 0, 0),
+        .apiVersion         = VK_API_VERSION_1_0,
+    };
+    return appInfo;
 }
 
 VkResult vk_linear_create_instance(
-    VkApplicationInfo* pApplicationInfo, VkInstance* pInstance
+    const VkApplicationInfo* pApplicationInfo, VkInstance* pInstance
 ) {
     VkInstanceCreateInfo createInfo = {
         .sType            = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
@@ -46,6 +48,7 @@ VkResult vk_linear_create_instance(
         .flags            = 0,
         .pApplicationInfo = pApplicationInfo,
     };
+
     VkResult result = vkCreateInstance(&createInfo, NULL, pInstance);
     assert(result == VK_SUCCESS);
     return result;
@@ -78,7 +81,17 @@ uint32_t findComputeQueueFamilyIndex(VkPhysicalDevice physicalDevice) {
 int main(void) {
     // 1. Initialize Vulkan: Create Vulkan instance
     VkInstance instance;
-    VkResult   result = vk_linear_initialize(instance);
+
+    // Create application info directly on the stack
+    VkApplicationInfo appInfo = vk_linear_application_info("linear");
+
+    // Create the Vulkan instance
+    VkResult result = vk_linear_create_instance(&appInfo, &instance);
+
+    if (result != VK_SUCCESS) {
+        fprintf(stderr, "Failed to create Vulkan instance!\n");
+        return EXIT_FAILURE;
+    }
 
     // 2. Select a physical device (GPU) that supports compute operations
     uint32_t gpuCount = 0;
@@ -116,10 +129,16 @@ int main(void) {
     vkGetDeviceQueue(device, computeQueueFamilyIndex, 0, &computeQueue);
 
     // 5. Create buffers for input/output vectors
-    const int vectorSize    = 4;
-    float     a[vectorSize] = {1.0f, 2.0f, 3.0f, 4.0f};
-    float     b[vectorSize] = {5.0f, 6.0f, 7.0f, 8.0f};
-    float     resultVector[vectorSize];
+    // variable-sized object may not be initialized except with an empty
+    // initializer. it's better to use a definition, static initialization via
+    // the stack, or explicit dynamic allocation via the heap.
+    // @note we can use the vector api we implemented in linear to do this for
+    // us. vector_t*a = vector_create(4); then access the contents as needed
+    // a->data = {1.0f, 2.0f, 3.0f, 4.0f}; // data is a pointer to a float
+    // a->columns; // length of the data array
+    float a[4] = {1.0f, 2.0f, 3.0f, 4.0f};
+    float b[4] = {5.0f, 6.0f, 7.0f, 8.0f};
+    float resultVector[4];
 
     // Here you would allocate and bind Vulkan buffers, such as for
     // InputBufferA, InputBufferB, and OutputBuffer. For brevity, this is left
