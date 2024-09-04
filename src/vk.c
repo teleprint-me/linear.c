@@ -11,7 +11,7 @@
 #include <vulkan/vulkan.h>
 
 VkApplicationInfo vk_linear_application_info(const char* pApplicationName) {
-    VkApplicationInfo appInfo = {
+    VkApplicationInfo pApplicationInfo = {
         .sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pApplicationName   = pApplicationName,
         .applicationVersion = VK_MAKE_API_VERSION(0, 1, 0, 0),
@@ -19,7 +19,7 @@ VkApplicationInfo vk_linear_application_info(const char* pApplicationName) {
         .engineVersion      = VK_MAKE_API_VERSION(0, 1, 0, 0),
         .apiVersion         = VK_API_VERSION_1_0,
     };
-    return appInfo;
+    return pApplicationInfo;
 }
 
 VkResult vk_linear_create_instance(
