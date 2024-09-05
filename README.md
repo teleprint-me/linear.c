@@ -129,6 +129,7 @@ To manually build the project:
 - [CMake Reference](https://cmake.org/cmake/help/latest/)
 - [Bash Reference](https://www.gnu.org/software/bash/manual/html_node/index.html)
 - [Vulkan Reference](https://docs.vulkan.org/)
+- [OpenGL Shading Language](https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language)
 
 ## License
 
