@@ -143,7 +143,7 @@ float scalar_divide(float x, float y) {
 
 // Element-wise operations
 
-vector_t* vector_scalar_elementwise_operation(
+vector_t* vector_scalar_operation(
     const vector_t* a, const float b, float (*operation)(float, float)
 ) {
     vector_t* c = vector_create(a->columns);
@@ -163,24 +163,24 @@ vector_t* vector_scalar_elementwise_operation(
 }
 
 vector_t* vector_scalar_add(const vector_t* a, const float b) {
-    return vector_scalar_elementwise_operation(a, b, scalar_add);
+    return vector_scalar_operation(a, b, scalar_add);
 }
 
 vector_t* vector_scalar_subtract(const vector_t* a, const float b) {
-    return vector_scalar_elementwise_operation(a, b, scalar_subtract);
+    return vector_scalar_operation(a, b, scalar_subtract);
 }
 
 vector_t* vector_scalar_multiply(const vector_t* a, const float b) {
-    return vector_scalar_elementwise_operation(a, b, scalar_multiply);
+    return vector_scalar_operation(a, b, scalar_multiply);
 }
 
 vector_t* vector_scalar_divide(const vector_t* a, const float b) {
-    return vector_scalar_elementwise_operation(a, b, scalar_divide);
+    return vector_scalar_operation(a, b, scalar_divide);
 }
 
 // Vector based operations
 
-vector_t* vector_vector_elementwise_operation(
+vector_t* vector_vector_operation(
     const vector_t* a, const vector_t* b, float (*operation)(float, float)
 ) {
     if (a->columns != b->columns) {
@@ -211,19 +211,19 @@ vector_t* vector_vector_elementwise_operation(
 }
 
 vector_t* vector_vector_add(const vector_t* a, const vector_t* b) {
-    return vector_vector_elementwise_operation(a, b, scalar_add);
+    return vector_vector_operation(a, b, scalar_add);
 }
 
 vector_t* vector_vector_subtract(const vector_t* a, const vector_t* b) {
-    return vector_vector_elementwise_operation(a, b, scalar_subtract);
+    return vector_vector_operation(a, b, scalar_subtract);
 }
 
 vector_t* vector_vector_multiply(const vector_t* a, const vector_t* b) {
-    return vector_vector_elementwise_operation(a, b, scalar_multiply);
+    return vector_vector_operation(a, b, scalar_multiply);
 }
 
 vector_t* vector_vector_divide(const vector_t* a, const vector_t* b) {
-    return vector_vector_elementwise_operation(a, b, scalar_divide);
+    return vector_vector_operation(a, b, scalar_divide);
 }
 
 // Common vector operations
