@@ -15,6 +15,7 @@
  */
 
 #include "matrix.h"
+#include "lehmer.h"
 #include "logger.h"
 
 #include <stdio.h>
