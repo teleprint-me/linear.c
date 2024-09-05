@@ -10,7 +10,7 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 option(LINEAR_VULKAN "Enable Vulkan support" OFF)
 
 # Setup submodule, module, and test names
-set(SUBMODULES logger float_is_close)
+set(SUBMODULES logger float_is_close lehmer)
 set(MODULES vector matrix)
 
 # Set the output directory for built binaries
@@ -42,7 +42,7 @@ set_target_properties(
 )
 
 target_include_directories(linear PUBLIC include)
-target_link_libraries(linear PUBLIC logger float_is_close)
+target_link_libraries(linear PUBLIC logger float_is_close lehmer)
 
 # Add test executables
 foreach(MOD IN LISTS MODULES)
