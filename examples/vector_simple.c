@@ -8,7 +8,7 @@
  *     gcc -o examples/vector_simple \
  *         # dependencies
  *         mods/logger/src/logger.c \
- *         mods/logger/src/lehmer.c \
+ *         mods/lehmer/src/lehmer.c \
  *         # source
  *         src/vector.c \
  *         # this file
