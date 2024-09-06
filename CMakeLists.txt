@@ -1,3 +1,5 @@
+# Root CMakeLists.txt
+
 cmake_minimum_required(VERSION 3.14)
 project(linear VERSION 0.1.0 DESCRIPTION "ANSI C library for Linear Algebra")
 
@@ -77,3 +79,6 @@ foreach(MOD IN LISTS MODULES)
         COMMAND "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_linear_${MOD}"
     )    
 endforeach()
+
+link_directories(${CMAKE_BINARY_DIR})
+add_subdirectory(examples)
