@@ -17,6 +17,8 @@
 #ifndef LINEAR_VECTOR_H
 #define LINEAR_VECTOR_H
 
+#include "lehmer.h"
+
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -67,6 +69,40 @@ vector_t* vector_create(const size_t columns);
  * @ref <https://stackoverflow.com/q/34284846/15147156>
  */
 void vector_free(vector_t* vector);
+
+// Initialization Operations
+void vector_fill(vector_t* vector, const float value);
+
+// Helper function to initialize a vector using a given random generator
+static void vector_initialize(
+    lehmer_state_t* state,
+    vector_t*       vector,
+    double (*lehmer_callback)(lehmer_state_t*)
+) {
+    for (size_t i = 0; i < vector->columns; i++) {
+        // Cast from double to float, as the vector uses float values
+        float n         = (float) lehmer_callback(state);
+        vector->data[i] = n;
+    }
+}
+
+// Initialize using lehmer modulo method
+void vector_lehmer_modulo(lehmer_state_t* state, vector_t* vector) {
+    vector_initialize_helper(state, vector, lehmer_random_modulo);
+}
+
+// Initialize using lehmer gamma method
+void vector_lehmer_gamma(lehmer_state_t* state, vector_t* vector) {
+    vector_initialize_helper(state, vector, lehmer_random_gamma);
+}
+
+// Initialize using lehmer delta method
+void vector_lehmer_delta(lehmer_state_t* state, vector_t* vector) {
+    vector_initialize_helper(state, vector, lehmer_random_delta);
+}
+
+// @todo Initialize using mersenne twister
+// @note Not currently available
 
 // Copy operations
 
