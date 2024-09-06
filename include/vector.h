@@ -71,6 +71,13 @@ vector_t* vector_create(const size_t columns);
 void vector_free(vector_t* vector);
 
 // Initialization Operations
+
+/**
+ * @brief Fill a vector with a specified value
+ *
+ * @param vector A pointer to the vector to initialize.
+ * @param value A scalar value to initialize the vector with.
+ */
 void vector_fill(vector_t* vector, const float value);
 
 /**
