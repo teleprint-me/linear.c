@@ -45,7 +45,15 @@ size_t matrix_elements(const matrix_t* matrix);
 
 // Initialization Operations
 void matrix_fill(matrix_t* matrix, const float value);
-void matrix_random_fill(matrix_t* matrix, const float min, const float max);
+
+// Initialize using lehmer-park methods
+void matrix_lehmer_modulo(lehmer_state_t* state, matrix_t* matrix);
+void matrix_lehmer_gamma(lehmer_state_t* state, matrix_t* matrix);
+void matrix_lehmer_delta(lehmer_state_t* state, matrix_t* matrix);
+
+// @todo Initialize using mersenne twister
+// @note Planned, but currently unavailable.
+//       See teleprint-me/lehmer.c for more information.
 
 // Copy Operations
 matrix_t* matrix_deep_copy(const matrix_t* matrix);
