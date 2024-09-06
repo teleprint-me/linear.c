@@ -18,24 +18,21 @@
 #include "lehmer.h"
 #include "logger.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 
 matrix_t* matrix_create(const size_t rows, const size_t columns) {
     matrix_t* matrix = (matrix_t*) malloc(sizeof(matrix_t));
     if (NULL == matrix) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
-            "Failed to allocate memory for matrix_t.\n");
+        LOG_ERROR("Failed to allocate memory for matrix_t.\n");
         return NULL;
     }
 
     // Allocate a single block of memory for the matrix elements
     matrix->data = (float*) malloc(rows * columns * sizeof(float));
     if (NULL == matrix->data) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
-            "Failed to allocate memory for matrix elements.\n");
+        LOG_ERROR("Failed to allocate memory for matrix elements.\n");
         free(matrix);
         return NULL;
     }
@@ -60,7 +57,7 @@ matrix_t* matrix_create(const size_t rows, const size_t columns) {
 
 void matrix_free(matrix_t* matrix) {
     if (NULL == matrix) {
-        LOG(&global_logger, LOG_LEVEL_ERROR, "Cannot free a NULL matrix.\n");
+        LOG_ERROR("Cannot free a NULL matrix.\n");
         return;
     }
 
@@ -74,13 +71,22 @@ void matrix_free(matrix_t* matrix) {
 float matrix_get_element(
     const matrix_t* matrix, const size_t row, const size_t column
 ) {
+    if (row >= matrix->rows || column >= matrix->columns) {
+        LOG_ERROR("Index out of bounds.\n");
+        return NAN;
+    }
     return matrix->data[row * matrix->columns + column];
 }
 
-void matrix_set_element(
-    matrix_t* matrix, const size_t row, const size_t column, const float value
+bool matrix_set_element(
+    matrix_t* matrix, size_t row, size_t column, float value
 ) {
+    if (row >= matrix->rows || column >= matrix->columns) {
+        LOG_ERROR("Index out of bounds.\n");
+        return false;
+    }
     matrix->data[row * matrix->columns + column] = value;
+    return true;
 }
 
 size_t matrix_elements(const matrix_t* matrix) {
