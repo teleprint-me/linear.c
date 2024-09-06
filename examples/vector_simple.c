@@ -26,15 +26,6 @@
 
 #include <stdio.h>
 
-// @brief initialize a vector with randomly generated values
-void vector_initialize(lehmer_state_t* state, vector_t* vector) {
-    for (size_t i = 0; i < vector->columns; i++) {
-        // typecast from double to float because lehmer returns double
-        float n         = (float) lehmer_random_modulo(state);
-        vector->data[i] = n; // this must be a float value
-    }
-}
-
 int main(void) {
     // initialize the rng state
     size_t          streams = 2;
@@ -51,11 +42,11 @@ int main(void) {
 
     // initialize vector a
     lehmer_state_select(state, 0); // use primary stream
-    vector_initialize(state, a);
+    vector_lehmer_modulo(state, a);
 
     // initialize vector b
     lehmer_state_select(state, 1); // use secondary stream
-    vector_initialize(state, b);
+    vector_lehmer_modulo(state, b);
 
     // @note Result is automatically allocated memory
     result = vector_vector_add(a, b);
