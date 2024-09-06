@@ -37,7 +37,7 @@ void      matrix_free(matrix_t* matrix);
 float matrix_get_element(
     const matrix_t* matrix, const size_t row, const size_t column
 );
-void matrix_set_element(
+bool matrix_set_element(
     matrix_t* matrix, const size_t row, const size_t column, const float value
 );
 // total number of elements within the matrix
