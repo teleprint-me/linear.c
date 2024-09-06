@@ -71,32 +71,36 @@ void vector_free(vector_t* vector) {
 }
 
 // Initialization Operations
-void vector_fill(vector_t* vector, const float value);
 
-/**
- * Initialize using lehmer-park methods
- *
- * @note gamma and delta produce bounded results
- * - **Significance of Constants**:
- * - $\delta(z)$ is either 0 or 1.
- * - Both $a \cdot (z \mod q)$ and $r \cdot (z \div q)$ are within the range
- *   $0, \dots, m-1$.
- * - $| \gamma(z) | \leq m-1$.
- */
+void vector_fill(vector_t* vector, const float value) {
+    for (size_t i = 0; i < vector->columns; i++) {
+        vector->data[i] = value;
+    }
+}
 
-// Helper function to initialize a vector using a given random generator
 static void vector_lehmer_initialize(
     lehmer_state_t* state,
     vector_t*       vector,
     double (*callback)(lehmer_state_t*)
-);
+) {
+    for (size_t i = 0; i < vector->columns; i++) {
+        // Cast from double to float, as the vector uses float values
+        float n         = (float) lehmer_callback(state);
+        vector->data[i] = n;
+    }
+}
 
-// $f(z) = a \cdot z \mod m$
-void vector_lehmer_modulo(lehmer_state_t* state, vector_t* vector);
-// $\gamma(z) = a \cdot (z \mod q) - r \cdot (z \div q)$
-void vector_lehmer_gamma(lehmer_state_t* state, vector_t* vector);
-// $\delta(z) = (z \div q) - (a \cdot z \div m)$
-void vector_lehmer_delta(lehmer_state_t* state, vector_t* vector);
+void vector_lehmer_modulo(lehmer_state_t* state, vector_t* vector) {
+    vector_lehmer_initialize(state, vector, lehmer_random_modulo);
+}
+
+void vector_lehmer_gamma(lehmer_state_t* state, vector_t* vector) {
+    vector_lehmer_initialize(state, vector, lehmer_random_gamma);
+}
+
+void vector_lehmer_delta(lehmer_state_t* state, vector_t* vector) {
+    vector_lehmer_initialize(state, vector, lehmer_random_delta);
+}
 
 // @todo Initialize using mersenne twister
 // @note Not currently available
