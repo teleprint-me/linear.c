@@ -92,9 +92,10 @@ void vector_fill(vector_t* vector, const float value);
  * @param state A pointer to the Lehmer state used for random number
  *              generation.
  * @param vector A pointer to the vector to initialize.
- * @param callback A function pointer to the specific Lehmer random number
- *                 generator variant to use (e.g., lehmer_random_modulo,
- *                 lehmer_random_gamma, lehmer_random_delta).
+ * @param lehmer_callback A function pointer to the specific Lehmer random
+ *                        number generator variant to use (e.g.,
+ *                        lehmer_random_modulo, lehmer_random_gamma,
+ *                        lehmer_random_delta).
  *
  * @note This function assumes that the callback function returns a double
  *       value, which will be cast to a float for storage in the vector.
@@ -102,7 +103,7 @@ void vector_fill(vector_t* vector, const float value);
 static void vector_lehmer_initialize(
     lehmer_state_t* state,
     vector_t*       vector,
-    double (*callback)(lehmer_state_t*)
+    double (*lehmer_callback)(lehmer_state_t*)
 );
 
 /**

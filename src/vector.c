@@ -81,7 +81,7 @@ void vector_fill(vector_t* vector, const float value) {
 static void vector_lehmer_initialize(
     lehmer_state_t* state,
     vector_t*       vector,
-    double (*callback)(lehmer_state_t*)
+    double (*lehmer_callback)(lehmer_state_t*)
 ) {
     for (size_t i = 0; i < vector->columns; i++) {
         // Cast from double to float, as the vector uses float values
