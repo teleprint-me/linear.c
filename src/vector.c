@@ -28,19 +28,13 @@
 vector_t* vector_create(const size_t columns) {
     vector_t* vector = (vector_t*) malloc(sizeof(vector_t));
     if (NULL == vector) { // If no memory was allocated
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
-            "Failed to allocate %zu bytes to struct Vector.\n",
-            columns);
+        LOG_ERROR("Failed to allocate %zu bytes to struct Vector.\n", columns);
         return NULL; // Early return if vector creation failed
     }
 
     vector->data = (float*) malloc(columns * sizeof(float));
     if (NULL == vector->data) { // Failed to allocate memory for elements
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
-            "Failed to allocate %zu bytes to vector->data.\n",
-            columns);
+        LOG_ERROR("Failed to allocate %zu bytes to vector->data.\n", columns);
         free(vector); // Free allocated vector memory to prevent leaks
         return NULL;  // Early return if vector creation failed
     }
@@ -99,10 +93,10 @@ vector_t* vector_shallow_copy(const vector_t* vector) {
     // Allocate memory for the new Vector structure only, not for its elements
     vector_t* new_vector = (vector_t*) malloc(sizeof(vector_t));
     if (NULL == new_vector) { // If no memory was allocated
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
+        LOG_ERROR(
             "Failed to allocate %zu bytes to struct Vector.\n",
-            sizeof(vector_t));
+            sizeof(vector_t)
+        );
         return NULL; // Early return if vector creation failed
     }
 
@@ -131,11 +125,11 @@ float scalar_multiply(float x, float y) {
 
 float scalar_divide(float x, float y) {
     if (y == 0) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
+        LOG_ERROR(
             "Division by zero is undefined. Cannot divide x (%f) by y (%f).\n",
             x,
-            y);
+            y
+        );
         return NAN; // Division by zero is undefined
     }
     return x / y;
@@ -148,9 +142,7 @@ vector_t* vector_scalar_operation(
 ) {
     vector_t* c = vector_create(a->columns);
     if (NULL == c) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
-            "Failed to allocate memory for the resultant vector.\n");
+        LOG_ERROR("Failed to allocate memory for the resultant vector.\n");
         return NULL;
     }
 
@@ -184,21 +176,19 @@ vector_t* vector_vector_operation(
     const vector_t* a, const vector_t* b, float (*operation)(float, float)
 ) {
     if (a->columns != b->columns) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
+        LOG_ERROR(
             "Vector dimensions do not match. Cannot perform operation on "
             "vectors of size %zu and "
             "%zu.\n",
             a->columns,
-            b->columns);
+            b->columns
+        );
         return NULL;
     }
 
     vector_t* c = vector_create(a->columns);
     if (NULL == c) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
-            "Failed to allocate memory for the resultant vector.\n");
+        LOG_ERROR("Failed to allocate memory for the resultant vector.\n");
         return NULL;
     }
 
@@ -243,13 +233,13 @@ float vector_distance(const vector_t* a, const vector_t* b) {
     float distance_squared = 0.0f;
 
     if (a->columns != b->columns) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
+        LOG_ERROR(
             "Vector dimensions do not match. Cannot perform operation on "
             "vectors of size %zu and "
             "%zu.\n",
             a->columns,
-            b->columns);
+            b->columns
+        );
         return NAN;
     }
 
@@ -270,10 +260,7 @@ float vector_mean(const vector_t* vector) {
     for (size_t i = 0; i < vector->columns; i++) {
         if (isnan(vector->data[i])) {
             // Log error and return NAN if any element is NaN
-            LOG(&global_logger,
-                LOG_LEVEL_ERROR,
-                "NaN element found at index %zu.\n",
-                i);
+            LOG_ERROR("NaN element found at index %zu.\n", i);
             return NAN;
         }
         sum += vector->data[i];
@@ -299,9 +286,7 @@ float vector_mean(const vector_t* vector) {
  * @param alpha Smoothing factor for the low-pass filter
  */
 float vector_low_pass_filter(const vector_t* vector, float alpha) {
-    LOG(&global_logger,
-        LOG_LEVEL_ERROR,
-        "Vector low pass filter is not currently implemented.\n");
+    LOG_ERROR("Vector low pass filter is not currently implemented.\n");
     return -1.0f;
 }
 
@@ -309,9 +294,7 @@ vector_t* vector_normalize(vector_t* vector, bool inplace) {
     float magnitude = vector_magnitude(vector);
 
     if (0 == magnitude) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
-            "Cannot normalize a zero-length vector.\n");
+        LOG_ERROR("Cannot normalize a zero-length vector.\n");
         return NULL;
     }
 
@@ -326,9 +309,8 @@ vector_t* vector_normalize(vector_t* vector, bool inplace) {
 
     vector_t* unit = vector_create(vector->columns);
     if (NULL == unit) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
-            "Failed to allocate memory for the normalized unit vector.\n");
+        LOG_ERROR("Failed to allocate memory for the normalized unit vector.\n"
+        );
         return NULL;
     }
 
@@ -354,9 +336,7 @@ vector_t* vector_scale(vector_t* vector, float scalar, bool inplace) {
     // perform out-of-place vector scaling
     vector_t* scaled_vector = vector_create(vector->columns);
     if (scaled_vector == NULL) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
-            "Failed to allocate memory for scaled vector.\n");
+        LOG_ERROR("Failed to allocate memory for scaled vector.\n");
         return NULL;
     }
 
@@ -410,13 +390,13 @@ vector_t* vector_clip(vector_t* vector, float min, float max, bool inplace) {
 
 float vector_dot_product(const vector_t* a, const vector_t* b) {
     if (a->columns != b->columns) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
+        LOG_ERROR(
             "Vector dimensions do not match. Cannot perform operation on "
             "vectors of size %zu and "
             "%zu.\n",
             a->columns,
-            b->columns);
+            b->columns
+        );
         return NAN;
     }
 
@@ -432,17 +412,14 @@ float vector_dot_product(const vector_t* a, const vector_t* b) {
 vector_t* vector_cross_product(const vector_t* a, const vector_t* b) {
     // Ensure both vectors are 3-dimensional.
     if (a->columns != 3 || b->columns != 3) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
-            "Cross product is only defined for 3-dimensional vectors.\n");
+        LOG_ERROR("Cross product is only defined for 3-dimensional vectors.\n"
+        );
         return NULL;
     }
 
     vector_t* result = vector_create(3);
     if (result == NULL) {
-        LOG(&global_logger,
-            LOG_LEVEL_ERROR,
-            "Failed to allocate memory for cross product vector.\n");
+        LOG_ERROR("Failed to allocate memory for cross product vector.\n");
         return NULL;
     }
 
