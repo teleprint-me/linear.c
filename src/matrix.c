@@ -169,3 +169,61 @@ bool matrix_is_identity(const matrix_t* matrix) {
     }
     return true;
 }
+
+// Matrix-Scalar Operations
+
+/**
+ * @brief Perform an element-wise scalar operation on a matrix.
+ *
+ * @param matrix A pointer to the matrix to operate on.
+ * @param scalar The scalar value to apply.
+ * @param operation The operation to apply element-wise.
+ *
+ * @return A new matrix containing the results of the operation.
+ */
+matrix_t* matrix_scalar_operation(
+    const matrix_t* matrix, float scalar, float (*operation)(float, float)
+) {
+    // Allocate a new matrix for the result
+    matrix_t* result = matrix_create(matrix->rows, matrix->columns);
+    if (NULL == result) {
+        LOG_ERROR("Failed to allocate memory to resulting matrix.");
+        return NULL; // Handle memory allocation failure
+    }
+
+    uint32_t max_elements = matrix_elements(matrix);
+
+    for (uint32_t i = 0; i < max_elements; i++) {
+        result->data[i] = operation(matrix->data[i], scalar);
+    }
+
+    return result;
+}
+
+/**
+ * @brief Add a scalar to each element of the matrix.
+ */
+matrix_t* matrix_scalar_add(const matrix_t* matrix, float scalar) {
+    return matrix_scalar_operation(matrix, scalar, scalar_add);
+}
+
+/**
+ * @brief Subtract a scalar from each element of the matrix.
+ */
+matrix_t* matrix_scalar_subtract(const matrix_t* matrix, float scalar) {
+    return matrix_scalar_operation(matrix, scalar, scalar_subtract);
+}
+
+/**
+ * @brief Multiply each element of the matrix by a scalar.
+ */
+matrix_t* matrix_scalar_multiply(const matrix_t* matrix, float scalar) {
+    return matrix_scalar_operation(matrix, scalar, scalar_multiply);
+}
+
+/**
+ * @brief Divide each element of the matrix by a scalar.
+ */
+matrix_t* matrix_scalar_divide(const matrix_t* matrix, float scalar) {
+    return matrix_scalar_operation(matrix, scalar, scalar_divide);
+}
