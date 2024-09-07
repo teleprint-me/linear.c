@@ -25,7 +25,7 @@
 
 // Lifecycle management
 
-vector_t* vector_create(const size_t columns) {
+vector_t* vector_create(const uint32_t columns) {
     vector_t* vector = (vector_t*) malloc(sizeof(vector_t));
     if (NULL == vector) { // If no memory was allocated
         LOG_ERROR("Failed to allocate %zu bytes to struct Vector.\n", columns);
@@ -47,7 +47,7 @@ vector_t* vector_create(const size_t columns) {
      *       its lifetime (e.g., gcc bug 8537). For this reason, we do not
      *       employ its use here.
      */
-    for (size_t i = 0; i < columns; i++) {
+    for (uint32_t i = 0; i < columns; i++) {
         vector->data[i] = 0.0f;
     }
 
@@ -73,7 +73,7 @@ void vector_free(vector_t* vector) {
 // Initialization Operations
 
 void vector_fill(vector_t* vector, const float value) {
-    for (size_t i = 0; i < vector->columns; i++) {
+    for (uint32_t i = 0; i < vector->columns; i++) {
         vector->data[i] = value;
     }
 }
@@ -83,7 +83,7 @@ static void vector_lehmer_initialize(
     vector_t*       vector,
     double (*lehmer_callback)(lehmer_state_t*)
 ) {
-    for (size_t i = 0; i < vector->columns; i++) {
+    for (uint32_t i = 0; i < vector->columns; i++) {
         // Cast from double to float, as the vector uses float values
         float n         = (float) lehmer_callback(state);
         vector->data[i] = n;
@@ -113,7 +113,7 @@ vector_t* vector_deep_copy(const vector_t* vector) {
         return NULL;
     }
 
-    for (size_t i = 0; i < vector->columns; ++i) {
+    for (uint32_t i = 0; i < vector->columns; ++i) {
         deep_copy->data[i] = vector->data[i];
     }
 
@@ -182,7 +182,7 @@ vector_t* vector_scalar_operation(
     }
 
     // Perform element-wise operation
-    for (size_t i = 0; i < a->columns; i++) {
+    for (uint32_t i = 0; i < a->columns; i++) {
         c->data[i] = operation(a->data[i], b);
     }
 
@@ -228,7 +228,7 @@ vector_t* vector_vector_operation(
     }
 
     // Perform element-wise operation
-    for (size_t i = 0; i < a->columns; i++) {
+    for (uint32_t i = 0; i < a->columns; i++) {
         c->data[i] = operation(a->data[i], b->data[i]);
     }
 
@@ -257,7 +257,7 @@ float vector_magnitude(const vector_t* vector) {
     float sum = 0;
 
     // sum the square of the elements for n-dimensional vectors
-    for (size_t i = 0; i < vector->columns; i++) {
+    for (uint32_t i = 0; i < vector->columns; i++) {
         sum += vector->data[i] * vector->data[i];
     }
 
@@ -278,7 +278,7 @@ float vector_distance(const vector_t* a, const vector_t* b) {
         return NAN;
     }
 
-    for (size_t i = 0; i < a->columns; ++i) {
+    for (uint32_t i = 0; i < a->columns; ++i) {
         distance_squared
             += (a->data[i] - b->data[i]) * (a->data[i] - b->data[i]);
     }
@@ -292,7 +292,7 @@ float vector_mean(const vector_t* vector) {
     }
 
     float sum = 0.0f;
-    for (size_t i = 0; i < vector->columns; i++) {
+    for (uint32_t i = 0; i < vector->columns; i++) {
         if (isnan(vector->data[i])) {
             // Log error and return NAN if any element is NaN
             LOG_ERROR("NaN element found at index %zu.\n", i);
@@ -335,7 +335,7 @@ vector_t* vector_normalize(vector_t* vector, bool inplace) {
 
     if (inplace) {
         // scale the elements down by the magnitude to produce a unit vector
-        for (size_t i = 0; i < vector->columns; i++) {
+        for (uint32_t i = 0; i < vector->columns; i++) {
             vector->data[i] /= magnitude;
         }
 
@@ -349,7 +349,7 @@ vector_t* vector_normalize(vector_t* vector, bool inplace) {
         return NULL;
     }
 
-    for (size_t i = 0; i < vector->columns; i++) {
+    for (uint32_t i = 0; i < vector->columns; i++) {
         unit->data[i] = vector->data[i] / magnitude;
     }
 
@@ -362,7 +362,7 @@ vector_t* vector_scale(vector_t* vector, float scalar, bool inplace) {
     }
 
     if (inplace) { // block out-of-place vector scaling if in-place is true
-        for (size_t i = 0; i < vector->columns; ++i) {
+        for (uint32_t i = 0; i < vector->columns; ++i) {
             vector->data[i] *= scalar; // scale the vector in-place
         }
         return vector; // return the scaled vector
@@ -375,7 +375,7 @@ vector_t* vector_scale(vector_t* vector, float scalar, bool inplace) {
         return NULL;
     }
 
-    for (size_t i = 0; i < vector->columns; ++i) {
+    for (uint32_t i = 0; i < vector->columns; ++i) {
         scaled_vector->data[i] = vector->data[i] * scalar;
     }
 
@@ -388,7 +388,7 @@ vector_t* vector_clip(vector_t* vector, float min, float max, bool inplace) {
     }
 
     if (inplace) {
-        for (size_t i = 0; i < vector->columns; i++) {
+        for (uint32_t i = 0; i < vector->columns; i++) {
             if (vector->data[i] < min) {
                 vector->data[i] = min;
             }
@@ -407,7 +407,7 @@ vector_t* vector_clip(vector_t* vector, float min, float max, bool inplace) {
                      // logs the error for us
     }
 
-    for (size_t i = 0; i < vector->columns; i++) {
+    for (uint32_t i = 0; i < vector->columns; i++) {
         if (vector->data[i] < min) {
             clipped_vector->data[i] = min;
         } else if (vector->data[i] > max) {
@@ -437,7 +437,7 @@ float vector_dot_product(const vector_t* a, const vector_t* b) {
 
     float product = 0.0f;
 
-    for (size_t i = 0; i < a->columns; i++) {
+    for (uint32_t i = 0; i < a->columns; i++) {
         product += a->data[i] * b->data[i];
     }
 

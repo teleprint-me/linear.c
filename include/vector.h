@@ -35,8 +35,8 @@
  * @param columns The number of elements (dimensions) in the vector.
  */
 typedef struct Vector {
-    float* data; ///< One-dimensional array representing the vector elements.
-    size_t columns; ///< The number of elements (dimensions) in the vector.
+    float*   data; ///< One-dimensional array representing the vector elements.
+    uint32_t columns; ///< The number of elements (dimensions) in the vector.
 } vector_t;
 
 /**
@@ -50,7 +50,7 @@ typedef struct Vector {
  *
  * @return A pointer to the newly created vector
  */
-vector_t* vector_create(const size_t columns);
+vector_t* vector_create(const uint32_t columns);
 
 /**
  * @brief Free an allocated N-dimensional vector
