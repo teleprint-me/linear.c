@@ -151,7 +151,7 @@ bool matrix_is_square(const matrix_t* matrix) {
 }
 
 bool matrix_is_transposed(const matrix_t* matrix) {
-    return matrix->is_transposed;
+    return matrix->state & MATRIX_TRANSPOSED;
 }
 
 bool matrix_is_identity(const matrix_t* matrix) {
