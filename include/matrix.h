@@ -22,59 +22,74 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+// @note combine multiple states, e.g.
+//    matrix.state = MATRIX_TRANSPOSED | MATRIX_SCALED;
+// @note check for specific state, e.g.
+//    (matrix.state & MATRIX_TRANSPOSED) ? x : y;
 typedef enum MatrixState {
-    MATRIX_TRANSPOSED, // maybe optional?
-    MATRIX_SCALED,     // might be useful
-    MATRIX_ROTATED,    // probably over-kill/over-engineered
-    MATRIX_TRANSLATED, // ditto...
+    MATRIX_NONE       = 0,      // Default state, no transformation applied.
+    MATRIX_TRANSPOSED = 1 << 0, // 0b0001
+    MATRIX_SCALED     = 1 << 1, // 0b0010
+    MATRIX_ROTATED    = 1 << 2, // 0b0100
+    MATRIX_TRANSLATED = 1 << 3  // 0b1000
 } matrix_state_t;
 
 /**
- * @brief A structure representing an N-dimensional vector.
+ * @brief A structure representing an N-dimensional matrix.
  *
  * This structure stores the number of dimensions and a dynamic array of
- * floating-point values, which represent the components of the vector in each
+ * floating-point values, which represent the components of the matrix in each
  * dimension.
  *
- * @param data   One-dimensional array representing the vector elements.
+ * @param data   One-dimensional array representing the matrix elements.
  * @param columns The width of the matrix.
  * @param rows The height of the matrix.
- * @param is_transposed
+ * @param state Indicates the matrix's state using bitwise flags.
  *
- * @note The alignment for the matrix_t is 4-bytes (32-bit) and the size is
- * 4-bytes, so unsigned long (size_t) is also 4-bytes at a 32-bit width, 4 * 3
- * is 12 bytes. The bool is 1-byte, but the alignment adds an overhead of
- * 4-bytes. This becomes a 16-byte structure.
- * @note Matrix operations are at least a^(n*m) operations which can be reduced
- * to O(n^2) in terms of time complexity. It's too early to optimize, but this
- * is a crucial detail that will impact performance as the input size grows,
- * which is -unfortunately- easy to do.
- * @note consider using type int to represents flags, e.g. transposed, scaled,
- * rotated, translated, etc. it still amounts to using 16-bytes, so, idk. it's
- * better than adding a bunch of bools, takes up about the same amount of
- * space, but allows more flags if needed with the same space. seems more
- * efficient.
+ * @note Using size_t creates an undesirable alignment of 8-bytes!
+ * - size_t -> unsigned long -> 8 bytes (this is big; undesirable)
+ * - uint32_t -> unsigned int -> 4 bytes (this is small; desirable)
+ * - int32_t -> signed int -> int -> 4 bytes (this is okay too)
+ *
+ * @note The alignment for matrix_t should be 4-bytes to keep its size small.
+ * size_t is an unsigned long at a whopping 8-bytes while unsigned int is only
+ * 4-bytes. This reduces the size significantly and uses 16-bytes instead of a
+ * whole 32-bytes. Using a type double is also 8-bytes. Bigger is not
+ * necessarily better.
+ *
+ * @note Matrix operations are at least some matrix a^(n*m) which is O(n^3) in
+ * terms of time complexity in operations which can be reduced to O(n^2) in
+ * terms of time complexity depending on the algorithm used. It's too early to
+ * optimize, but this is a crucial detail that will impact performance as the
+ * input size grows, which is, unfortunately, easy to do.
  */
 typedef struct Matrix {
-    float*  data; ///< One-dimensional array representing the matrix elements.
-    size_t  rows; ///< The number of rows in the matrix.
-    size_t  columns; ///< The number of columns in the matrix.
-    int32_t state;   ///< Indicates the matrices state
+    float*   data; ///< One-dimensional array representing the matrix elements.
+    uint32_t columns; ///< The number of columns in the matrix.
+    uint32_t rows;    ///< The number of rows in the matrix.
+    uint32_t state;   ///< Indicates the matrix's state using bitwise flags.
 } matrix_t;
 
 // Matrix lifecycle management
-matrix_t* matrix_create(const size_t rows, const size_t columns);
+
+matrix_t* matrix_create(const uint32_t rows, const uint32_t columns);
 void      matrix_free(matrix_t* matrix);
 
 // Element Access
-float matrix_get_element(
-    const matrix_t* matrix, const size_t row, const size_t column
+
+float matrix_element_get(
+    const matrix_t* matrix, const uint32_t row, const uint32_t column
 );
-bool matrix_set_element(
-    matrix_t* matrix, const size_t row, const size_t column, const float value
+
+bool matrix_element_set(
+    matrix_t*      matrix,
+    const uint32_t row,
+    const uint32_t column,
+    const float    value
 );
+
 // total number of elements within the matrix
-size_t matrix_elements(const matrix_t* matrix);
+uint32_t matrix_element_count(const matrix_t* matrix);
 
 // Initialization Operations
 
