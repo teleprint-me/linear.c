@@ -35,39 +35,26 @@ typedef enum MatrixState {
 } matrix_state_t;
 
 /**
- * @brief A structure representing an N-dimensional matrix.
+ * @brief A structure representing a matrix with dynamic dimensions.
  *
- * This structure stores the number of dimensions and a dynamic array of
- * floating-point values, which represent the components of the matrix in each
- * dimension.
+ * This structure holds a matrix's elements in a 1D array format and stores its
+ * dimensions and state. Optimized for 4-byte alignment to reduce size and
+ * improve performance.
  *
- * @param data   One-dimensional array representing the matrix elements.
- * @param columns The width of the matrix.
- * @param rows The height of the matrix.
- * @param state Indicates the matrix's state using bitwise flags.
+ * @param data   Pointer to the matrix elements (1D array).
+ * @param columns The number of columns in the matrix.
+ * @param rows The number of rows in the matrix.
+ * @param state Bitwise flags representing the matrix's state (e.g.,
+ * transposed, scaled).
  *
- * @note Using size_t creates an undesirable alignment of 8-bytes!
- * - size_t -> unsigned long -> 8 bytes (this is big; undesirable)
- * - uint32_t -> unsigned int -> 4 bytes (this is small; desirable)
- * - int32_t -> signed int -> int -> 4 bytes (this is okay too)
- *
- * @note The alignment for matrix_t should be 4-bytes to keep its size small.
- * size_t is an unsigned long at a whopping 8-bytes while unsigned int is only
- * 4-bytes. This reduces the size significantly and uses 16-bytes instead of a
- * whole 32-bytes. Using a type double is also 8-bytes. Bigger is not
- * necessarily better.
- *
- * @note Matrix operations are at least some matrix a^(n*m) which is O(n^3) in
- * terms of time complexity in operations which can be reduced to O(n^2) in
- * terms of time complexity depending on the algorithm used. It's too early to
- * optimize, but this is a crucial detail that will impact performance as the
- * input size grows, which is, unfortunately, easy to do.
+ * @note The matrix uses uint32_t for dimensions to maintain 4-byte alignment,
+ *       minimizing memory overhead compared to size_t (8 bytes).
  */
 typedef struct Matrix {
-    float*   data; ///< One-dimensional array representing the matrix elements.
-    uint32_t columns; ///< The number of columns in the matrix.
-    uint32_t rows;    ///< The number of rows in the matrix.
-    uint32_t state;   ///< Indicates the matrix's state using bitwise flags.
+    float*   data;    ///< 1D array representing the matrix elements.
+    uint32_t columns; ///< Number of columns in the matrix.
+    uint32_t rows;    ///< Number of rows in the matrix.
+    uint32_t state;   ///< State flags using bitwise operations.
 } matrix_t;
 
 // Matrix lifecycle management
