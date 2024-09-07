@@ -44,11 +44,63 @@ bool matrix_set_element(
 size_t matrix_elements(const matrix_t* matrix);
 
 // Initialization Operations
+
+/**
+ * @brief Fills a matrix with a constant value.
+ *
+ * Sets all elements of the matrix to a specified value.
+ *
+ * @param matrix A pointer to the matrix to fill.
+ * @param value The constant value to assign to each element of the matrix.
+ */
 void matrix_fill(matrix_t* matrix, const float value);
 
-// Initialize using lehmer-park methods
+/**
+ * @brief Helper function to initialize a matrix using a specified random
+ *        generator.
+ *
+ * This function serves as a helper to initialize a matrix's data using a given
+ * random number generation method from the Lehmer family of algorithms.
+ *
+ * @param state A pointer to the Lehmer state used for random number
+ *              generation.
+ * @param matrix A pointer to the matrix to initialize.
+ * @param lehmer_callback A function pointer to the specific Lehmer random
+ *                        number generator variant to use (e.g.,
+ *                        lehmer_random_modulo, lehmer_random_gamma,
+ *                        lehmer_random_delta).
+ */
+static void matrix_lehmer_initialize(
+    lehmer_state_t* state,
+    matrix_t*       matrix,
+    double (*lehmer_callback)(lehmer_state_t*)
+);
+
+/**
+ * @brief Initialize a matrix using the Lehmer-Park modulo method.
+ *
+ * @param state A pointer to the Lehmer state used for random number
+ *              generation.
+ * @param matrix A pointer to the matrix to initialize.
+ */
 void matrix_lehmer_modulo(lehmer_state_t* state, matrix_t* matrix);
+
+/**
+ * @brief Initialize a matrix using the Lehmer-Park gamma method.
+ *
+ * @param state A pointer to the Lehmer state used for random number
+ *              generation.
+ * @param matrix A pointer to the matrix to initialize.
+ */
 void matrix_lehmer_gamma(lehmer_state_t* state, matrix_t* matrix);
+
+/**
+ * @brief Initialize a matrix using the Lehmer-Park delta method.
+ *
+ * @param state A pointer to the Lehmer state used for random number
+ *              generation.
+ * @param matrix A pointer to the matrix to initialize.
+ */
 void matrix_lehmer_delta(lehmer_state_t* state, matrix_t* matrix);
 
 // @todo Initialize using mersenne twister
