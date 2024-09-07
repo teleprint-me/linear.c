@@ -388,6 +388,10 @@ float vector_mean(const vector_t* vector);
  *
  * @ref low-pass filter mean of a vector
  * <https://www.cs.princeton.edu/courses/archive/fall08/cos436/Duda/PR_learn/mean.htm>
+ *
+ * @note This needs revisiting. Is this is the Arithmetic, Geometric, Harmonic,
+ * or some other kind of mean. What validates this as the "mean" of a given
+ * input?
  */
 float vector_low_pass_filter(const vector_t* vector, float alpha);
 
