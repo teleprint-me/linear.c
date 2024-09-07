@@ -93,6 +93,40 @@ size_t matrix_elements(const matrix_t* matrix) {
     return matrix->rows * matrix->columns;
 }
 
+// Initialization Operations
+
+void matrix_fill(matrix_t* matrix, const float value) {
+    size_t max_elements = matrix_elements(matrix);
+    for (size_t i = 0; i < max_elements; i++) {
+        matrix->data[i] = value;
+    }
+}
+
+static void matrix_lehmer_initialize(
+    lehmer_state_t* state,
+    matrix_t*       matrix,
+    double (*lehmer_callback)(lehmer_state_t*)
+) {
+    size_t max_elements = matrix_elements(matrix);
+    for (size_t i = 0; i < max_elements; i++) {
+        // Cast from double to float, as the vector uses float values
+        float n         = (float) lehmer_callback(state);
+        matrix->data[i] = n;
+    }
+}
+
+void matrix_lehmer_modulo(lehmer_state_t* state, matrix_t* matrix) {
+    matrix_lehmer_initialize(state, matrix, lehmer_random_modulo);
+}
+
+void matrix_lehmer_gamma(lehmer_state_t* state, matrix_t* matrix) {
+    matrix_lehmer_initialize(state, matrix, lehmer_random_gamma);
+}
+
+void matrix_lehmer_delta(lehmer_state_t* state, matrix_t* matrix) {
+    matrix_lehmer_initialize(state, matrix, lehmer_random_delta);
+}
+
 bool matrix_is_zero(const matrix_t* matrix) {
     for (size_t i = 0; i < matrix->rows * matrix->columns; i++) {
         if (matrix->data[i] != 0.0f) {
