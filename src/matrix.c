@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <string.h>
 
-matrix_t* matrix_create(const size_t rows, const size_t columns) {
+matrix_t* matrix_create(const uint32_t rows, const uint32_t columns) {
     matrix_t* matrix = (matrix_t*) malloc(sizeof(matrix_t));
     if (NULL == matrix) {
         LOG_ERROR("Failed to allocate memory for matrix_t.\n");
@@ -45,7 +45,7 @@ matrix_t* matrix_create(const size_t rows, const size_t columns) {
      *       its lifetime (e.g., gcc bug 8537). For this reason, we do not
      *       employ its use here.
      */
-    for (size_t i = 0; i < rows * columns; i++) {
+    for (uint32_t i = 0; i < rows * columns; i++) {
         matrix->data[i] = 0.0f;
     }
 
@@ -69,7 +69,7 @@ void matrix_free(matrix_t* matrix) {
 }
 
 float matrix_get_element(
-    const matrix_t* matrix, const size_t row, const size_t column
+    const matrix_t* matrix, const uint32_t row, const uint32_t column
 ) {
     if (row >= matrix->rows || column >= matrix->columns) {
         LOG_ERROR("Index out of bounds.\n");
@@ -79,7 +79,7 @@ float matrix_get_element(
 }
 
 bool matrix_set_element(
-    matrix_t* matrix, size_t row, size_t column, float value
+    matrix_t* matrix, uint32_t row, uint32_t column, float value
 ) {
     if (row >= matrix->rows || column >= matrix->columns) {
         LOG_ERROR("Index out of bounds.\n");
@@ -89,15 +89,15 @@ bool matrix_set_element(
     return true;
 }
 
-size_t matrix_elements(const matrix_t* matrix) {
+uint32_t matrix_elements(const matrix_t* matrix) {
     return matrix->rows * matrix->columns;
 }
 
 // Initialization Operations
 
 void matrix_fill(matrix_t* matrix, const float value) {
-    size_t max_elements = matrix_elements(matrix);
-    for (size_t i = 0; i < max_elements; i++) {
+    uint32_t max_elements = matrix_elements(matrix);
+    for (uint32_t i = 0; i < max_elements; i++) {
         matrix->data[i] = value;
     }
 }
@@ -107,8 +107,8 @@ static void matrix_lehmer_initialize(
     matrix_t*       matrix,
     double (*lehmer_callback)(lehmer_state_t*)
 ) {
-    size_t max_elements = matrix_elements(matrix);
-    for (size_t i = 0; i < max_elements; i++) {
+    uint32_t max_elements = matrix_elements(matrix);
+    for (uint32_t i = 0; i < max_elements; i++) {
         // Cast from double to float, as the vector uses float values
         float n         = (float) lehmer_callback(state);
         matrix->data[i] = n;
@@ -138,7 +138,7 @@ matrix_t* matrix_shallow_copy(const matrix_t* matrix) {
 }
 
 bool matrix_is_zero(const matrix_t* matrix) {
-    for (size_t i = 0; i < matrix->rows * matrix->columns; i++) {
+    for (uint32_t i = 0; i < matrix->rows * matrix->columns; i++) {
         if (matrix->data[i] != 0.0f) {
             return false;
         }
@@ -159,8 +159,8 @@ bool matrix_is_identity(const matrix_t* matrix) {
         return false;
     }
 
-    for (size_t i = 0; i < matrix->rows; i++) {
-        for (size_t j = 0; j < matrix->columns; j++) {
+    for (uint32_t i = 0; i < matrix->rows; i++) {
+        for (uint32_t j = 0; j < matrix->columns; j++) {
             float value = matrix->data[i * matrix->columns + j];
             if ((i == j && value != 1.0f) || (i != j && value != 0.0f)) {
                 return false;
