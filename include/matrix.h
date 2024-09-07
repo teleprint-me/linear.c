@@ -22,11 +22,44 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+typedef enum MatrixState {
+    MATRIX_TRANSPOSED, // maybe optional?
+    MATRIX_SCALED,     // might be useful
+    MATRIX_ROTATED,    // probably over-kill/over-engineered
+    MATRIX_TRANSLATED, // ditto...
+} matrix_state_t;
+
+/**
+ * @brief A structure representing an N-dimensional vector.
+ *
+ * This structure stores the number of dimensions and a dynamic array of
+ * floating-point values, which represent the components of the vector in each
+ * dimension.
+ *
+ * @param data   One-dimensional array representing the vector elements.
+ * @param columns The width of the matrix.
+ * @param rows The height of the matrix.
+ * @param is_transposed
+ *
+ * @note The alignment for the matrix_t is 4-bytes (32-bit) and the size is
+ * 4-bytes, so unsigned long (size_t) is also 4-bytes at a 32-bit width, 4 * 3
+ * is 12 bytes. The bool is 1-byte, but the alignment adds an overhead of
+ * 4-bytes. This becomes a 16-byte structure.
+ * @note Matrix operations are at least a^(n*m) operations which can be reduced
+ * to O(n^2) in terms of time complexity. It's too early to optimize, but this
+ * is a crucial detail that will impact performance as the input size grows,
+ * which is -unfortunately- easy to do.
+ * @note consider using type int to represents flags, e.g. transposed, scaled,
+ * rotated, translated, etc. it still amounts to using 16-bytes, so, idk. it's
+ * better than adding a bunch of bools, takes up about the same amount of
+ * space, but allows more flags if needed with the same space. seems more
+ * efficient.
+ */
 typedef struct Matrix {
-    float* data; ///< One-dimensional array representing the matrix elements.
-    size_t rows; ///< The number of rows in the matrix.
-    size_t columns;       ///< The number of columns in the matrix.
-    bool   is_transposed; ///< Indicates if the matrix is transposed.
+    float*  data; ///< One-dimensional array representing the matrix elements.
+    size_t  rows; ///< The number of rows in the matrix.
+    size_t  columns; ///< The number of columns in the matrix.
+    int32_t state;   ///< Indicates the matrices state
 } matrix_t;
 
 // Matrix lifecycle management
