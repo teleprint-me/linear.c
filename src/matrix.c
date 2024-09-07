@@ -127,6 +127,16 @@ void matrix_lehmer_delta(lehmer_state_t* state, matrix_t* matrix) {
     matrix_lehmer_initialize(state, matrix, lehmer_random_delta);
 }
 
+matrix_t* matrix_deep_copy(const matrix_t* matrix) {
+    LOG_ERROR("Copying matrices is not implemented.\n");
+    return NULL;
+}
+
+matrix_t* matrix_shallow_copy(const matrix_t* matrix) {
+    LOG_ERROR("Copying matrices is not implemented.\n");
+    return NULL;
+}
+
 bool matrix_is_zero(const matrix_t* matrix) {
     for (size_t i = 0; i < matrix->rows * matrix->columns; i++) {
         if (matrix->data[i] != 0.0f) {
