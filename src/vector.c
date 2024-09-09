@@ -222,8 +222,7 @@ vector_t* vector_scalar_cpu_operation(
     for (uint32_t i = 0; i < LINEAR_THREAD_COUNT; i++) {
         pthread_join(threads[i], NULL);
     }
-#else
-    // Single-threaded fallback
+#else // Single-threaded fallback
     for (uint32_t i = 0; i < a->columns; i++) {
         result->data[i] = operation(a->data[i], b);
     }
@@ -235,18 +234,13 @@ vector_t* vector_scalar_cpu_operation(
 vector_t* vector_scalar_operation(
     const vector_t* a, const float b, float (*operation)(float, float)
 ) {
-    vector_t* c = vector_create(a->columns);
-    if (NULL == c) {
-        LOG_ERROR("Failed to allocate memory for the resultant vector.\n");
-        return NULL;
-    }
-
-    // Perform element-wise operation
-    for (uint32_t i = 0; i < a->columns; i++) {
-        c->data[i] = operation(a->data[i], b);
-    }
-
-    return c;
+#if LINEAR_BACKEND == BACKEND_CPU
+    return vector_scalar_cpu_operation(a, b, operation);
+#elif LINEAR_BACKEND == BACKEND_GPU
+    return vector_scalar_gpu_operation(a, b, operation); // Placeholder
+#else
+    #error "Unsupported backend"
+#endif
 }
 
 vector_t* vector_scalar_add(const vector_t* a, const float b) {
@@ -312,8 +306,7 @@ vector_t* vector_vector_cpu_operation(
     for (uint32_t i = 0; i < LINEAR_THREAD_COUNT; i++) {
         pthread_join(threads[i], NULL);
     }
-#else
-    // Single-threaded fallback
+#else // Single-threaded fallback
     for (uint32_t i = 0; i < a->columns; i++) {
         result->data[i] = operation(a->data[i], b->data[i]);
     }
@@ -325,29 +318,13 @@ vector_t* vector_vector_cpu_operation(
 vector_t* vector_vector_operation(
     const vector_t* a, const vector_t* b, float (*operation)(float, float)
 ) {
-    if (a->columns != b->columns) {
-        LOG_ERROR(
-            "Vector dimensions do not match. Cannot perform operation on "
-            "vectors of size %zu and "
-            "%zu.\n",
-            a->columns,
-            b->columns
-        );
-        return NULL;
-    }
-
-    vector_t* c = vector_create(a->columns);
-    if (NULL == c) {
-        LOG_ERROR("Failed to allocate memory for the resultant vector.\n");
-        return NULL;
-    }
-
-    // Perform element-wise operation
-    for (uint32_t i = 0; i < a->columns; i++) {
-        c->data[i] = operation(a->data[i], b->data[i]);
-    }
-
-    return c;
+#if LINEAR_BACKEND == BACKEND_CPU
+    return vector_vector_cpu_operation(a, b, operation);
+#elif LINEAR_BACKEND == BACKEND_GPU
+    return vector_vector_gpu_operation(a, b, operation); // Placeholder
+#else
+    #error "Unsupported backend"
+#endif
 }
 
 vector_t* vector_vector_add(const vector_t* a, const vector_t* b) {
