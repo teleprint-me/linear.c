@@ -19,10 +19,18 @@
 
 #include <pthread.h>
 #include <stdlib.h>
+#include <sys/sysinfo.h>
 
+// @note The thread could should always be configurable
+// @ref See GNU C Extensions for more information
+// https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/C-Extensions.html
 #ifndef LINEAR_THREAD_COUNT
-    #define LINEAR_THREAD_COUNT 4
-#endif // LINEAR_THREAD_COUNT
+    #ifdef __GNUC__
+        #define LINEAR_THREAD_COUNT get_nprocs_conf()
+    #elif
+        #define LINEAR_THREAD_COUNT 8
+    #endif // __GNUC__
+#endif     // LINEAR_THREAD_COUNT
 
 // There are 3 types of structures:
 //     vector_t, matrix_t, and tensor_t
@@ -51,7 +59,7 @@ typedef struct {
 
 // @note Could pass the number of threads to the structure?
 //       Doesn't feel right, though.
-linear_thread_t* linear_thread_create(/* todo: void for now */ void);
+linear_thread_t* linear_thread_create(uint32_t num_threads);
 void             linear_thread_free(linear_thread_t* thread);
 
 // Initialize a thread pool (optional)
