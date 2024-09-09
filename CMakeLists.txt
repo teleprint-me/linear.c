@@ -8,7 +8,11 @@ set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 
+# Enable Shared Objects
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+
+# Enable Multi-threaded support
+option(LINEAR_THREAD "Enable Thread support" OFF)
 option(LINEAR_VULKAN "Enable Vulkan support" OFF)
 
 # Setup submodule, module, and test names
