@@ -134,13 +134,49 @@ void matrix_lehmer_delta(lehmer_state_t* state, matrix_t* matrix) {
 // Copy Operations
 
 matrix_t* matrix_deep_copy(const matrix_t* matrix) {
-    LOG_ERROR("Copying matrices is not implemented.\n");
-    return NULL;
+    if (NULL == matrix) {
+        return NULL; // Nothing to copy
+    }
+
+    matrix_t* deep_copy = matrix_create(matrix->rows, matrix->columns);
+    if (NULL == deep_copy) {
+        return NULL; // Error is logged by default
+    }
+
+    // @note It may reduce overhead to simply access the member variables
+    // directly instead of adding the function overhead. This has little to no
+    // impact for smaller sets, but will have some impact on much larger sets.
+    uint32_t max_elements = matrix_element_count(matrix);
+    for (uint32_t i = 0; i < max_elements; ++i) {
+        deep_copy->data[i] = matrix->data[i];
+    }
+
+    return deep_copy;
 }
 
 matrix_t* matrix_shallow_copy(const matrix_t* matrix) {
-    LOG_ERROR("Copying matrices is not implemented.\n");
-    return NULL;
+    if (NULL == matrix) {
+        return NULL;
+    }
+
+    // Allocate memory for the new Matrix structure only, not for its elements
+    matrix_t* new_matrix = (matrix_t*) malloc(sizeof(matrix_t));
+    if (NULL == new_matrix) { // If no memory was allocated
+        LOG_ERROR(
+            "Failed to allocate %zu bytes to struct Matrix.\n",
+            sizeof(matrix_t)
+        );
+        return NULL; // Early return if matrix creation failed
+    }
+
+    // Copy all fields except elements (pointer to an array)
+    new_matrix->columns = matrix->columns;
+    new_matrix->rows    = matrix->rows;
+
+    // Assign the existing pointer to the new Vector structure
+    new_matrix->data = matrix->data;
+
+    return new_matrix;
 }
 
 // Properties
