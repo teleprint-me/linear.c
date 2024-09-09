@@ -10,17 +10,6 @@
  *
  * Only pure C is used with minimal dependencies on external libraries.
  *
- * @note Official document
- * @ref https://ieeexplore.ieee.org/document/8766229
- *
- * @note 3rd party work
- * @ref https://geeksforgeeks.org/ieee-standard-754-floating-point-numbers/
- *
- * @note Source code
- * @ref /usr/include/c10/util/half.h
- * @ref https://github.com/Maratyszcza/FP16
- * @ref https://github.com/pytorch/pytorch/blob/main/c10/util/Half.h
- *
  * @ref See teleprint-me/fixed-point for more information
  */
 
