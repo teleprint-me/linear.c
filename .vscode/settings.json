@@ -88,6 +88,8 @@
     "ranges": "c",
     "span": "c",
     "chrono": "c",
-    "random": "c"
+    "random": "c",
+    "*.ipp": "c",
+    "functional": "c"
   }
 }
