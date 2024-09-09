@@ -9,31 +9,76 @@
  */
 
 #include "scalar.h"
+#include "logger.h"
 
 #include <math.h>
 
 // Scalar operations
 
-float scalar_add(float x, float y) {
-    return x + y;
+void* scalar_add(void* a, void* b, linear_data_t type) {
+    if (LINEAR_FLOAT == type) {
+        float* result = malloc(sizeof(float));
+        *result       = *(float*) a + *(float*) b;
+        return result;
+    } else if (LINEAR_INT) {
+        int* result = malloc(sizeof(int));
+        *result     = *(int*) a + *(int*) b;
+        return result;
+    } else {
+        LOG_ERROR("scalar_add: Unsupported data type\n");
+        return NULL;
+    }
 }
 
-float scalar_subtract(float x, float y) {
-    return x - y;
+void* scalar_subtract(void* a, void* b, linear_data_t type) {
+    if (LINEAR_FLOAT == type) {
+        float* result = malloc(sizeof(float));
+        *result       = *(float*) a - *(float*) b;
+        return result;
+    } else if (LINEAR_INT) {
+        int* result = malloc(sizeof(int));
+        *result     = *(int*) a - *(int*) b;
+        return result;
+    } else {
+        LOG_ERROR("scalar_subtract: Unsupported data type\n");
+        return NULL;
+    }
 }
 
-float scalar_multiply(float x, float y) {
-    return x * y;
+void* scalar_multiply(void* a, void* b, linear_data_t type) {
+    if (LINEAR_FLOAT == type) {
+        float* result = malloc(sizeof(float));
+        *result       = (*(float*) a) * (*(float*) b);
+        return result;
+    } else if (LINEAR_INT) {
+        int* result = malloc(sizeof(int));
+        *result     = (*(int*) a) * (*(int*) b);
+        return result;
+    } else {
+        LOG_ERROR("scalar_multiply: Unsupported data type\n");
+        return NULL;
+    }
 }
 
-float scalar_divide(float x, float y) {
-    if (y == 0) {
+void* scalar_divide(void* a, void* b, linear_data_t type) {
+    if (b == 0) {
         LOG_ERROR(
-            "Division by zero is undefined. Cannot divide x (%f) by y (%f).\n",
-            x,
-            y
+            "Division by zero is undefined. Cannot divide a (%f) by b (%f).\n",
+            a,
+            b
         );
         return NAN; // Division by zero is undefined
     }
-    return x / y;
+    if (LINEAR_FLOAT == type) {
+        float* result = malloc(sizeof(float));
+        *result       = *(float*) a / *(float*) b;
+        return result;
+    } else if (LINEAR_INT) {
+        int* result = malloc(sizeof(int));
+        *result     = *(int*) a / *(int*) b;
+        return result;
+    } else {
+        LOG_ERROR("scalar_divide: Unsupported data type\n");
+        return NULL;
+    }
 }
