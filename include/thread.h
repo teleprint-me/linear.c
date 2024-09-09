@@ -23,9 +23,8 @@
 #ifndef LINEAR_THREAD_H
 #define LINEAR_THREAD_H
 
-#include "vector.h"
-
 #include <pthread.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <sys/sysinfo.h>
 
@@ -38,33 +37,41 @@
     #endif // __GNUC__
 #endif     // LINEAR_THREAD_COUNT
 
-// Define the types of Linear structures
-typedef enum LinearStructure {
-    LINEAR_VECTOR, ///< vector_t
-    LINEAR_MATRIX, ///< matrix_t
-    LINEAR_TENSOR  ///< tensor_t
-} linear_struct_t;
+// Define the linear backend device
+typedef enum LinearBackend {
+    BACKEND_CPU, // CPU Backend (multi-threading)
+    BACKEND_GPU  // GPU Backend (Vulkan or any other backend)
+} linear_backend_t;
 
-// Define the thread structure
+// Define the linear data type
+typedef enum LinearData {
+    LINEAR_FLOAT,
+    LINEAR_INT,
+} linear_data_t;
+
+typedef void* (*operation_t)(void*, void*, linear_data_t type);
+
+// Generalized thread structure using void pointers
 typedef struct LinearThread {
-    void*    a; ///< Pointer to the first operand (vector, matrix, or tensor).
-    void*    b; ///< Pointer to the second operand (vector, matrix, or tensor).
-    void*    result;      ///< Pointer to the result data structure.
-    uint32_t begin;       ///< Starting index for the thread to operate.
-    uint32_t end;         ///< Ending index for the thread to operate.
-    linear_struct_t type; ///< Type of struct (e.g., vector, matrix, tensor).
-    float (*operation)(float, float); ///< Pointer to the operation function.
+    void*         a;       ///< Pointer to the first operand.
+    void*         b;       ///< Pointer to the second operand.
+    void*         result;  ///< Pointer to the resultant data.
+    uint32_t      begin;   ///< Starting index for the thread to operate.
+    uint32_t      end;     ///< Ending index for the thread to operate.
+    linear_data_t type;    ///< The data type for the operation
+    operation_t operation; ///< Pointer to the generalized operation function.
 } linear_thread_t;
 
-// Function prototypes
-linear_thread_t* linear_thread_create(uint32_t num_threads);
-void             linear_thread_free(linear_thread_t* thread);
+// @todo Pinned: Add proper support for thread pooling
+
+// linear_thread_t* linear_thread_create(uint32_t num_threads);
+// void             linear_thread_free(linear_thread_t* thread);
 
 // Initialize a thread pool (optional)
-void linear_thread_pool_create(uint32_t num_threads);
-void linear_thread_pool_free(void);
+// void linear_thread_pool_create(uint32_t num_threads);
+// void linear_thread_pool_free(void);
 
 // Function to perform an operation in parallel
-void thread_parallel_operation(linear_thread_t* thread);
+// void thread_parallel_operation(linear_thread_t* thread);
 
 #endif // LINEAR_THREAD_H
