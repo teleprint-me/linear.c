@@ -35,8 +35,9 @@
  * @param columns The number of elements (dimensions) in the vector.
  */
 typedef struct Vector {
-    float*   data; ///< One-dimensional array representing the vector elements.
-    uint32_t columns; ///< The number of elements (dimensions) in the vector.
+    void*    data; ///< One-dimensional array representing the vector elements.
+    uint32_t columns;   ///< The number of elements (dimensions) in the vector.
+    linear_data_t type; ///< The data type of the elements
 } vector_t;
 
 /**
