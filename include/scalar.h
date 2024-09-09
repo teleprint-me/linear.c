@@ -19,9 +19,6 @@ typedef enum LinearData {
     LINEAR_INT,
 } linear_data_t;
 
-// not sure if this should be here or in thread.h?
-typedef void* (*linear_operation_t)(void*, void*, void*, linear_data_t);
-
 /**
  * @brief Perform arithmetic operations
  *
@@ -33,6 +30,7 @@ typedef void* (*linear_operation_t)(void*, void*, void*, linear_data_t);
  *
  * @return Result of the operation
  */
+typedef void* (*linear_operation_t)(void*, void*, void*, linear_data_t);
 
 /**
  * @brief Add two floating-point numbers
