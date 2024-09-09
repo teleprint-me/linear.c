@@ -11,6 +11,11 @@
  * Only pure C is used with minimal dependencies on external libraries.
  *
  * @ref See teleprint-me/fixed-point for more information
+ *
+ * - Keep the interface minimal and focused.
+ * - Avoid generics; stick to a single base type (float) for now.
+ * - Isolate conversion logic into a utility file/module.
+ * - Maintain clean and comprehensible separation between different components.
  */
 
 #ifndef LINEAR_FLOATING_POINT_H
