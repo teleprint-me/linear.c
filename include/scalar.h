@@ -35,7 +35,7 @@ extern "C" {
  *
  * @return Result of the operation
  */
-typedef void* (*linear_operation_t)(void*, void*, void*, linear_data_t);
+typedef void* (*scalar_operation_t)(void*, void*, void*, linear_data_t);
 
 /**
  * @brief Add two scalar values
