@@ -13,7 +13,12 @@
 
 // Scalar operations
 
-// Define the linear data type
+/**
+ * @brief Define the linear data type
+ *
+ * @param LINEAR_FLOAT Enum representing the float data type
+ * @param LINEAR_INT Enum representing the int data type
+ */
 typedef enum LinearData {
     LINEAR_FLOAT,
     LINEAR_INT,
@@ -27,6 +32,8 @@ typedef enum LinearData {
  *
  * @param x First operand
  * @param y Second operand
+ * @param result The resultant data from the operation
+ * @param type The data type for the operation
  *
  * @return Result of the operation
  */
