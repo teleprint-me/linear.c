@@ -23,6 +23,8 @@
 #ifndef LINEAR_THREAD_H
 #define LINEAR_THREAD_H
 
+#include "scalar.h"
+
 #include <pthread.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -42,14 +44,6 @@ typedef enum LinearBackend {
     BACKEND_CPU, ///< CPU Backend (multi-threading)
     BACKEND_GPU  ///< GPU Backend (Vulkan or any other backend)
 } linear_backend_t;
-
-// Define the linear data type
-typedef enum LinearData {
-    LINEAR_FLOAT,
-    LINEAR_INT,
-} linear_data_t;
-
-typedef void* (*linear_operation_t)(void*, void*, linear_data_t type);
 
 // Generalized thread structure using void pointers
 typedef struct LinearThread {
