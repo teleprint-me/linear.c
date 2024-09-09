@@ -39,10 +39,15 @@
     #endif // __GNUC__
 #endif     // LINEAR_THREAD_COUNT
 
-// Define the linear device type
+// @brief Define the linear device type
+//
+// @note All code must be vendor agnostic and completely portable.
+// Utilized GPU backends must support compute shaders and must be vendor
+// agnostic. I plan support Vulkan in isolation as it abstracts vendor specific
+// implementations.
 typedef enum LinearBackend {
     BACKEND_CPU, ///< CPU Backend (multi-threading)
-    BACKEND_GPU  ///< GPU Backend (Vulkan or any other backend)
+    BACKEND_GPU  ///< GPU Backend OpenGL/Vulkan-only
 } linear_backend_t;
 
 // Generalized thread structure using void pointers
