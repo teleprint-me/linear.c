@@ -14,18 +14,13 @@
 #ifndef LINEAR_SCALAR_H
 #define LINEAR_SCALAR_H
 
-// Scalar operations
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
-/**
- * @brief Define the linear data type
- *
- * @param LINEAR_FLOAT Enum representing the float data type
- * @param LINEAR_INT Enum representing the int data type
- */
-typedef enum LinearData {
-    LINEAR_FLOAT,
-    LINEAR_INT,
-} linear_data_t;
+#include "floating_point.h"
+
+// Scalar operations
 
 /**
  * @brief Perform arithmetic operations
@@ -61,5 +56,9 @@ void* scalar_multiply(void* a, void* b, void* result, linear_data_t type);
  * @brief Divide two scalar values
  */
 void* scalar_divide(void* a, void* b, void* result, linear_data_t type);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif // LINEAR_SCALAR_H
