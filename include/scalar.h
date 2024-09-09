@@ -40,22 +40,22 @@ typedef enum LinearData {
 typedef void* (*linear_operation_t)(void*, void*, void*, linear_data_t);
 
 /**
- * @brief Add two floating-point numbers
+ * @brief Add two scalar values
  */
 void* scalar_add(void* a, void* b, void* result, linear_data_t type);
 
 /**
- * @brief Subtract two floating-point numbers
+ * @brief Subtract two scalar values
  */
 void* scalar_subtract(void* a, void* b, void* result, linear_data_t type);
 
 /**
- * @brief Multiply two floating-point numbers
+ * @brief Multiply two scalar values
  */
 void* scalar_multiply(void* a, void* b, void* result, linear_data_t type);
 
 /**
- * @brief Divide two floating-point numbers
+ * @brief Divide two scalar values
  */
 void* scalar_divide(void* a, void* b, void* result, linear_data_t type);
 
