@@ -53,13 +53,10 @@ void* scalar_multiply(void* a, void* b, void* result, linear_data_t type) {
 }
 
 void* scalar_divide(void* a, void* b, void* result, linear_data_t type) {
-    if (b == 0) {
-        LOG_ERROR(
-            "Division by zero is undefined. Cannot divide a (%f) by b (%f).\n",
-            a,
-            b
-        );
-        return NULL; // Division by zero is undefined
+    if ((LINEAR_FLOAT == type && 0.0f == *(float*) b)
+        || (LINEAR_INT == type && 0 == *(int*) b)) {
+        LOG_ERROR("Division by zero is undefined. Cannot divide.\n");
+        return NULL;
     }
     if (LINEAR_FLOAT == type) {
         *(float*) result = *(float*) a / *(float*) b;
