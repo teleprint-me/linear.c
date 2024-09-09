@@ -37,10 +37,10 @@
     #endif // __GNUC__
 #endif     // LINEAR_THREAD_COUNT
 
-// Define the linear backend device
+// Define the linear device type
 typedef enum LinearBackend {
-    BACKEND_CPU, // CPU Backend (multi-threading)
-    BACKEND_GPU  // GPU Backend (Vulkan or any other backend)
+    BACKEND_CPU, ///< CPU Backend (multi-threading)
+    BACKEND_GPU  ///< GPU Backend (Vulkan or any other backend)
 } linear_backend_t;
 
 // Define the linear data type
@@ -49,17 +49,18 @@ typedef enum LinearData {
     LINEAR_INT,
 } linear_data_t;
 
-typedef void* (*operation_t)(void*, void*, linear_data_t type);
+typedef void* (*linear_operation_t)(void*, void*, linear_data_t type);
 
 // Generalized thread structure using void pointers
 typedef struct LinearThread {
-    void*         a;       ///< Pointer to the first operand.
-    void*         b;       ///< Pointer to the second operand.
-    void*         result;  ///< Pointer to the resultant data.
-    uint32_t      begin;   ///< Starting index for the thread to operate.
-    uint32_t      end;     ///< Ending index for the thread to operate.
-    linear_data_t type;    ///< The data type for the operation
-    operation_t operation; ///< Pointer to the generalized operation function.
+    void*         a;      ///< Pointer to the first operand.
+    void*         b;      ///< Pointer to the second operand.
+    void*         result; ///< Pointer to the resultant data.
+    uint32_t      begin;  ///< Starting index for the thread to operate.
+    uint32_t      end;    ///< Ending index for the thread to operate.
+    linear_data_t type;   ///< The data type for the operation
+    linear_operation_t
+        operation; ///< Pointer to the generalized operation function.
 } linear_thread_t;
 
 // @todo Pinned: Add proper support for thread pooling
