@@ -16,6 +16,7 @@
 
 #include "vector.h"
 #include "logger.h"
+#include "thread.h"
 
 #include <math.h>
 #include <stdbool.h>
@@ -172,6 +173,22 @@ float scalar_divide(float x, float y) {
 
 // Element-wise operations
 
+// Vector-Scalar Operations
+
+// Worker function for multi-threaded vector-scalar operation
+void* vector_scalar_thread_worker(void* arg) {
+    linear_thread_t* data   = (linear_thread_t*) arg;
+    vector_t*        a      = (vector_t*) data->a;
+    vector_t*        result = (vector_t*) data->result;
+    float            b      = *(float*) data->b;
+
+    for (uint32_t i = data->begin; i < data->end; i++) {
+        result->data[i] = data->operation(a->data[i], b);
+    }
+
+    return NULL;
+}
+
 vector_t* vector_scalar_operation(
     const vector_t* a, const float b, float (*operation)(float, float)
 ) {
@@ -205,7 +222,19 @@ vector_t* vector_scalar_divide(const vector_t* a, const float b) {
     return vector_scalar_operation(a, b, scalar_divide);
 }
 
-// Vector based operations
+// Vector-Vector operations
+
+void* vector_vector_thread_worker(void* arg) {
+    linear_thread_t* data   = (linear_thread_t*) arg;
+    vector_t*        a      = (vector_t*) data->a;
+    vector_t*        b      = (vector_t*) data->b;
+    vector_t*        result = (vector_t*) data->result;
+
+    for (size_t i = data->begin; i < data->end; ++i) {
+        result->data[i] = data->operation(a->data[i], b->data[i]);
+    }
+    return NULL;
+}
 
 vector_t* vector_vector_operation(
     const vector_t* a, const vector_t* b, float (*operation)(float, float)
