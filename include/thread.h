@@ -15,7 +15,7 @@
  * @ref See teleprint-me/fixed-point for more information
  * https://github.com/teleprint-me/fixed-point.git
  *
- * @note The thread count could should always be configurable.
+ * @note The thread count should always be configurable.
  * @ref See GNU C Extensions for more information
  * https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/C-Extensions.html
  */
