@@ -179,14 +179,57 @@ float scalar_divide(float x, float y) {
 void* vector_scalar_thread_worker(void* arg) {
     linear_thread_t* data   = (linear_thread_t*) arg;
     vector_t*        a      = (vector_t*) data->a;
-    vector_t*        result = (vector_t*) data->result;
     float            b      = *(float*) data->b;
+    vector_t*        result = (vector_t*) data->result;
 
     for (uint32_t i = data->begin; i < data->end; i++) {
         result->data[i] = data->operation(a->data[i], b);
     }
 
     return NULL;
+}
+
+vector_t* vector_scalar_cpu_operation(
+    const vector_t* a, const float b, float (*operation)(float, float)
+) {
+    vector_t* result = vector_create(a->columns);
+    if (NULL == result) {
+        LOG_ERROR("Failed to allocate memory for the resultant vector.\n");
+        return NULL;
+    }
+
+// Perform multi-threaded execution or single-threaded operation
+#ifdef LINEAR_THREAD
+    // Initialize threads and distribute work among them
+    pthread_t       threads[LINEAR_THREAD_COUNT];
+    linear_thread_t thread_data[LINEAR_THREAD_COUNT];
+    uint32_t        chunk_size = a->columns / LINEAR_THREAD_COUNT;
+
+    for (uint32_t i = 0; i < LINEAR_THREAD_COUNT; i++) {
+        thread_data[i].a         = (void*) a;
+        thread_data[i].b         = &b; // scalar operation
+        thread_data[i].result    = result;
+        thread_data[i].begin     = i * chunk_size;
+        thread_data[i].end       = (i + 1) * chunk_size;
+        thread_data[i].operation = operation;
+
+        pthread_create(
+            &threads[i], NULL, vector_scalar_thread_worker, &thread_data[i]
+        );
+    }
+
+    // Join threads
+    for (uint32_t i = 0; i < LINEAR_THREAD_COUNT; i++) {
+        pthread_join(threads[i], NULL);
+    }
+#else
+    // Single-threaded fallback
+    for (uint32_t i = 0; i < a->columns; i++) {
+        result->data[i] = operation(a->data[i], b);
+    }
+#endif
+
+    return result;
 }
 
 vector_t* vector_scalar_operation(
@@ -234,6 +277,49 @@ void* vector_vector_thread_worker(void* arg) {
         result->data[i] = data->operation(a->data[i], b->data[i]);
     }
     return NULL;
+}
+
+vector_t* vector_vector_cpu_operation(
+    const vector_t* a, const vector_t* b, float (*operation)(float, float)
+) {
+    vector_t* result = vector_create(a->columns);
+    if (NULL == result) {
+        LOG_ERROR("Failed to allocate memory for the resultant vector.\n");
+        return NULL;
+    }
+
+// Perform multi-threaded execution or single-threaded operation
+#ifdef LINEAR_THREAD
+    // Initialize threads and distribute work among them
+    pthread_t       threads[LINEAR_THREAD_COUNT];
+    linear_thread_t thread_data[LINEAR_THREAD_COUNT];
+    uint32_t        chunk_size = a->columns / LINEAR_THREAD_COUNT;
+
+    for (uint32_t i = 0; i < LINEAR_THREAD_COUNT; i++) {
+        thread_data[i].a         = (void*) a;
+        thread_data[i].b         = (void*) b; // vector operation
+        thread_data[i].result    = result;
+        thread_data[i].begin     = i * chunk_size;
+        thread_data[i].end       = (i + 1) * chunk_size;
+        thread_data[i].operation = operation;
+
+        pthread_create(
+            &threads[i], NULL, vector_vector_thread_worker, &thread_data[i]
+        );
+    }
+
+    // Join threads
+    for (uint32_t i = 0; i < LINEAR_THREAD_COUNT; i++) {
+        pthread_join(threads[i], NULL);
+    }
+#else
+    // Single-threaded fallback
+    for (uint32_t i = 0; i < a->columns; i++) {
+        result->data[i] = operation(a->data[i], b->data[i]);
+    }
+#endif
+
+    return result;
 }
 
 vector_t* vector_vector_operation(
