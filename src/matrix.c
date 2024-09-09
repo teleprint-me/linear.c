@@ -42,10 +42,10 @@ matrix_t* matrix_create(const uint32_t rows, const uint32_t columns) {
     /**
      * Initialize all elements to zero
      *
-     * @note memset may be optimized away (under the as-if rules) if the object
-     *       modified by this function is not accessed again for the rest of
-     *       its lifetime (e.g., gcc bug 8537). For this reason, we do not
-     *       employ its use here.
+     * @note memset() may be optimized away (under the as-if rules) if the
+     *       object modified by this function is not accessed again for the
+     *       rest of its lifetime (e.g., gcc bug 8537). For this reason, we do
+     *       not employ its use here.
      */
     for (uint32_t i = 0; i < rows * columns; i++) {
         matrix->data[i] = 0.0f;
