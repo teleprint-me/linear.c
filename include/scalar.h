@@ -20,7 +20,7 @@ typedef enum LinearData {
 } linear_data_t;
 
 // not sure if this should be here or in thread.h?
-typedef void* (*linear_operation_t)(void*, void*, linear_data_t type);
+typedef void* (*linear_operation_t)(void*, void*, void*, linear_data_t);
 
 /**
  * @brief Perform arithmetic operations
@@ -37,21 +37,21 @@ typedef void* (*linear_operation_t)(void*, void*, linear_data_t type);
 /**
  * @brief Add two floating-point numbers
  */
-void* scalar_add(void* x, void* y, linear_data_t type);
+void* scalar_add(void* a, void* b, void* result, linear_data_t type);
 
 /**
  * @brief Subtract two floating-point numbers
  */
-void* scalar_subtract(void* x, void* y, linear_data_t type);
+void* scalar_subtract(void* a, void* b, void* result, linear_data_t type);
 
 /**
  * @brief Multiply two floating-point numbers
  */
-void* scalar_multiply(void* x, void* y, linear_data_t type);
+void* scalar_multiply(void* a, void* b, void* result, linear_data_t type);
 
 /**
  * @brief Divide two floating-point numbers
  */
-void* scalar_divide(void* x, void* y, linear_data_t type);
+void* scalar_divide(void* a, void* b, void* result, linear_data_t type);
 
 #endif // LINEAR_SCALAR_H
