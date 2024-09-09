@@ -33,6 +33,7 @@
  *
  * @param data   One-dimensional array representing the vector elements.
  * @param columns The number of elements (dimensions) in the vector.
+ * @param type The enumerable type representing the integral type
  */
 typedef struct Vector {
     void*    data; ///< One-dimensional array representing the vector elements.
@@ -187,38 +188,6 @@ vector_t* vector_deep_copy(const vector_t* vector);
 vector_t* vector_shallow_copy(const vector_t* vector);
 
 // Scalar operations
-
-/**
- * @brief Perform arithmetic operations
- *
- * These helper functions perform basic arithmetic on two floating-point values
- * and return the result for Element-wise operations.
- *
- * @param x First operand
- * @param y Second operand
- *
- * @return Result of the operation
- */
-
-/**
- * @brief Add two floating-point numbers
- */
-float scalar_add(float x, float y);
-
-/**
- * @brief Subtract two floating-point numbers
- */
-float scalar_subtract(float x, float y);
-
-/**
- * @brief Multiply two floating-point numbers
- */
-float scalar_multiply(float x, float y);
-
-/**
- * @brief Divide two floating-point numbers
- */
-float scalar_divide(float x, float y);
 
 // Element-wise operations
 
