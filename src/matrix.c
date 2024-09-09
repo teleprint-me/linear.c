@@ -22,6 +22,8 @@
 #include <stdio.h>
 #include <string.h>
 
+// Lifecycle Management
+
 matrix_t* matrix_create(const uint32_t rows, const uint32_t columns) {
     matrix_t* matrix = (matrix_t*) malloc(sizeof(matrix_t));
     if (NULL == matrix) {
@@ -68,7 +70,9 @@ void matrix_free(matrix_t* matrix) {
     free(matrix);
 }
 
-float matrix_get_element(
+// Element Access
+
+float matrix_element_get(
     const matrix_t* matrix, const uint32_t row, const uint32_t column
 ) {
     if (row >= matrix->rows || column >= matrix->columns) {
@@ -78,7 +82,7 @@ float matrix_get_element(
     return matrix->data[row * matrix->columns + column];
 }
 
-bool matrix_set_element(
+bool matrix_element_set(
     matrix_t* matrix, uint32_t row, uint32_t column, float value
 ) {
     if (row >= matrix->rows || column >= matrix->columns) {
@@ -89,14 +93,14 @@ bool matrix_set_element(
     return true;
 }
 
-uint32_t matrix_elements(const matrix_t* matrix) {
+uint32_t matrix_element_count(const matrix_t* matrix) {
     return matrix->rows * matrix->columns;
 }
 
 // Initialization Operations
 
 void matrix_fill(matrix_t* matrix, const float value) {
-    uint32_t max_elements = matrix_elements(matrix);
+    uint32_t max_elements = matrix_element_count(matrix);
     for (uint32_t i = 0; i < max_elements; i++) {
         matrix->data[i] = value;
     }
@@ -107,7 +111,7 @@ static void matrix_lehmer_initialize(
     matrix_t*       matrix,
     double (*lehmer_callback)(lehmer_state_t*)
 ) {
-    uint32_t max_elements = matrix_elements(matrix);
+    uint32_t max_elements = matrix_element_count(matrix);
     for (uint32_t i = 0; i < max_elements; i++) {
         // Cast from double to float, as the vector uses float values
         float n         = (float) lehmer_callback(state);
@@ -127,6 +131,8 @@ void matrix_lehmer_delta(lehmer_state_t* state, matrix_t* matrix) {
     matrix_lehmer_initialize(state, matrix, lehmer_random_delta);
 }
 
+// Copy Operations
+
 matrix_t* matrix_deep_copy(const matrix_t* matrix) {
     LOG_ERROR("Copying matrices is not implemented.\n");
     return NULL;
@@ -136,6 +142,8 @@ matrix_t* matrix_shallow_copy(const matrix_t* matrix) {
     LOG_ERROR("Copying matrices is not implemented.\n");
     return NULL;
 }
+
+// Properties
 
 bool matrix_is_zero(const matrix_t* matrix) {
     for (uint32_t i = 0; i < matrix->rows * matrix->columns; i++) {
@@ -191,7 +199,7 @@ matrix_t* matrix_scalar_operation(
         return NULL; // Handle memory allocation failure
     }
 
-    uint32_t max_elements = matrix_elements(matrix);
+    uint32_t max_elements = matrix_element_count(matrix);
 
     for (uint32_t i = 0; i < max_elements; i++) {
         result->data[i] = operation(matrix->data[i], scalar);
