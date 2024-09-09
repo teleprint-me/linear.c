@@ -17,9 +17,9 @@ void* scalar_add(void* a, void* b, void* result, linear_data_t type) {
     if (LINEAR_FLOAT == type) {
         *(float*) result = *(float*) a + *(float*) b;
         return (float*) result;
-    } else if (LINEAR_INT == type) {
-        *(int*) result = *(int*) a + *(int*) b;
-        return (int*) result;
+    } else if (LINEAR_INT32 == type) {
+        *(int32_t*) result = *(int32_t*) a + *(int32_t*) b;
+        return (int32_t*) result;
     } else {
         LOG_ERROR("scalar_add: Unsupported data type\n");
         return NULL;
@@ -30,7 +30,7 @@ void* scalar_subtract(void* a, void* b, void* result, linear_data_t type) {
     if (LINEAR_FLOAT == type) {
         *(float*) result = *(float*) a - *(float*) b;
         return (float*) result;
-    } else if (LINEAR_INT == type) {
+    } else if (LINEAR_INT32 == type) {
         *(int*) result = *(int*) a - *(int*) b;
         return (int*) result;
     } else {
@@ -43,7 +43,7 @@ void* scalar_multiply(void* a, void* b, void* result, linear_data_t type) {
     if (LINEAR_FLOAT == type) {
         *(float*) result = (*(float*) a) * (*(float*) b);
         return (float*) result;
-    } else if (LINEAR_INT == type) {
+    } else if (LINEAR_INT32 == type) {
         *(int*) result = (*(int*) a) * (*(int*) b);
         return (int*) result;
     } else {
@@ -54,14 +54,14 @@ void* scalar_multiply(void* a, void* b, void* result, linear_data_t type) {
 
 void* scalar_divide(void* a, void* b, void* result, linear_data_t type) {
     if ((LINEAR_FLOAT == type && 0.0f == *(float*) b)
-        || (LINEAR_INT == type && 0 == *(int*) b)) {
+        || (LINEAR_INT32 == type && 0 == *(int*) b)) {
         LOG_ERROR("Division by zero is undefined. Cannot divide.\n");
         return NULL;
     }
     if (LINEAR_FLOAT == type) {
         *(float*) result = *(float*) a / *(float*) b;
         return (float*) result;
-    } else if (LINEAR_INT == type) {
+    } else if (LINEAR_INT32 == type) {
         *(int*) result = *(int*) a / *(int*) b;
         return (int*) result;
     } else {
