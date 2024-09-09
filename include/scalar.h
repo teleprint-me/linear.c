@@ -6,6 +6,9 @@
  * @brief A simple and easy-to-use Scalar API in C
  *
  * @note Only pure C is used with minimal dependencies on external libraries.
+ *
+ * @todo Add a compile-time check or static assertion to ensure that only
+ *       supported types are passed to these functions.
  */
 
 #ifndef LINEAR_SCALAR_H
