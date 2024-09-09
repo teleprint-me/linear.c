@@ -13,8 +13,8 @@
  * @ref See teleprint-me/fixed-point for more information
  */
 
-#ifndef FLOATING_POINT_H
-#define FLOATING_POINT_H
+#ifndef LINEAR_FLOATING_POINT_H
+#define LINEAR_FLOATING_POINT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -76,4 +76,4 @@ float decode_float32(int32_t bits);
 }
 #endif // __cplusplus
 
-#endif // FLOATING_POINT_H
+#endif // LINEAR_FLOATING_POINT_H
