@@ -134,5 +134,3 @@ To manually build the project:
 ## License
 
 This project is licensed under the AGPL License. See the [LICENSE](LICENSE) file for details.
-
-[†](https://cyberpunk.fandom.com/wiki/ITS)
