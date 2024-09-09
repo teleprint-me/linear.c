@@ -11,72 +11,62 @@
 #include "scalar.h"
 #include "logger.h"
 
-#include <math.h>
-
 // Scalar operations
 
-void* scalar_add(void* a, void* b, linear_data_t type) {
+void* scalar_add(void* a, void* b, void* result, linear_data_t type) {
     if (LINEAR_FLOAT == type) {
-        float* result = malloc(sizeof(float));
-        *result       = *(float*) a + *(float*) b;
-        return result;
-    } else if (LINEAR_INT) {
-        int* result = malloc(sizeof(int));
-        *result     = *(int*) a + *(int*) b;
-        return result;
+        *(float*) result = *(float*) a + *(float*) b;
+        return (float*) result;
+    } else if (LINEAR_INT == type) {
+        *(int*) result = *(int*) a + *(int*) b;
+        return (int*) result;
     } else {
         LOG_ERROR("scalar_add: Unsupported data type\n");
         return NULL;
     }
 }
 
-void* scalar_subtract(void* a, void* b, linear_data_t type) {
+void* scalar_subtract(void* a, void* b, void* result, linear_data_t type) {
     if (LINEAR_FLOAT == type) {
-        float* result = malloc(sizeof(float));
-        *result       = *(float*) a - *(float*) b;
-        return result;
-    } else if (LINEAR_INT) {
-        int* result = malloc(sizeof(int));
-        *result     = *(int*) a - *(int*) b;
-        return result;
+        *(float*) result = *(float*) a - *(float*) b;
+        return (float*) result;
+    } else if (LINEAR_INT == type) {
+        *(int*) result = *(int*) a - *(int*) b;
+        return (int*) result;
     } else {
         LOG_ERROR("scalar_subtract: Unsupported data type\n");
         return NULL;
     }
 }
 
-void* scalar_multiply(void* a, void* b, linear_data_t type) {
+void* scalar_multiply(void* a, void* b, void* result, linear_data_t type) {
     if (LINEAR_FLOAT == type) {
-        float* result = malloc(sizeof(float));
-        *result       = (*(float*) a) * (*(float*) b);
-        return result;
-    } else if (LINEAR_INT) {
-        int* result = malloc(sizeof(int));
-        *result     = (*(int*) a) * (*(int*) b);
-        return result;
+        *(float*) result = (*(float*) a) * (*(float*) b);
+        return (float*) result;
+    } else if (LINEAR_INT == type) {
+        *(int*) result = (*(int*) a) * (*(int*) b);
+        return (int*) result;
     } else {
         LOG_ERROR("scalar_multiply: Unsupported data type\n");
         return NULL;
     }
 }
 
-void* scalar_divide(void* a, void* b, linear_data_t type) {
+void* scalar_divide(void* a, void* b, void* result, linear_data_t type) {
     if (b == 0) {
         LOG_ERROR(
             "Division by zero is undefined. Cannot divide a (%f) by b (%f).\n",
             a,
             b
         );
-        return NAN; // Division by zero is undefined
+        return NULL; // Division by zero is undefined
     }
     if (LINEAR_FLOAT == type) {
-        float* result = malloc(sizeof(float));
-        *result       = *(float*) a / *(float*) b;
-        return result;
-    } else if (LINEAR_INT) {
-        int* result = malloc(sizeof(int));
-        *result     = *(int*) a / *(int*) b;
-        return result;
+        *(float*) result = *(float*) a / *(float*) b;
+        return (float*) result;
+    } else if (LINEAR_INT == type) {
+        *(int*) result = *(int*) a / *(int*) b;
+        return (int*) result;
     } else {
         LOG_ERROR("scalar_divide: Unsupported data type\n");
         return NULL;
