@@ -21,7 +21,7 @@
 
 // Add operations
 
-void* scalar_add_float(void* a, void* b, void* result) {
+void* scalar_add_float32(void* a, void* b, void* result) {
     *(float*) result = (*(float*) a) + (*(float*) b);
     return (float*) result;
 }
@@ -33,7 +33,7 @@ void* scalar_add_int32(void* a, void* b, void* result) {
 
 // Subtract operations
 
-void* scalar_subtract_float(void* a, void* b, void* result) {
+void* scalar_subtract_float32(void* a, void* b, void* result) {
     *(float*) result = (*(float*) a) - (*(float*) b);
     return (float*) result;
 }
@@ -45,7 +45,7 @@ void* scalar_subtract_int32(void* a, void* b, void* result) {
 
 // Multiply operations
 
-void* scalar_multiply_float(void* a, void* b, void* result) {
+void* scalar_multiply_float32(void* a, void* b, void* result) {
     *(float*) result = (*(float*) a) * (*(float*) b);
     return (float*) result;
 }
@@ -57,7 +57,7 @@ void* scalar_multiply_int32(void* a, void* b, void* result) {
 
 // Divide operations
 
-void* scalar_divide_float(void* a, void* b, void* result) {
+void* scalar_divide_float32(void* a, void* b, void* result) {
     if (0.0f == *(float*) b) {
         LOG_ERROR("Division by zero is undefined. Cannot divide.\n");
         return NULL;
@@ -80,7 +80,7 @@ void* scalar_divide_int32(void* a, void* b, void* result) {
 void* scalar_add(void* a, void* b, void* result, numeric_data_t type) {
     switch (type) {
         case NUMERIC_FLOAT32:
-            return scalar_add_float(a, b, result);
+            return scalar_add_float32(a, b, result);
         case NUMERIC_INT32:
             return scalar_add_int32(a, b, result);
         default:
@@ -92,7 +92,7 @@ void* scalar_add(void* a, void* b, void* result, numeric_data_t type) {
 void* scalar_subtract(void* a, void* b, void* result, numeric_data_t type) {
     switch (type) {
         case NUMERIC_FLOAT32:
-            return scalar_subtract_float(a, b, result);
+            return scalar_subtract_float32(a, b, result);
         case NUMERIC_INT32:
             return scalar_subtract_int32(a, b, result);
         default:
@@ -104,7 +104,7 @@ void* scalar_subtract(void* a, void* b, void* result, numeric_data_t type) {
 void* scalar_multiply(void* a, void* b, void* result, numeric_data_t type) {
     switch (type) {
         case NUMERIC_FLOAT32:
-            return scalar_multiply_float(a, b, type);
+            return scalar_multiply_float32(a, b, type);
         case NUMERIC_INT32:
             return scalar_multiply_int32(a, b, result);
         default:
@@ -116,7 +116,7 @@ void* scalar_multiply(void* a, void* b, void* result, numeric_data_t type) {
 void* scalar_divide(void* a, void* b, void* result, numeric_data_t type) {
     switch (type) {
         case NUMERIC_FLOAT32:
-            return scalar_divide_float(a, b, result);
+            return scalar_divide_float32(a, b, result);
         case NUMERIC_INT32:
             return scalar_divide_int32(a, b, result);
         default:
