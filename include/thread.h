@@ -11,7 +11,7 @@
  *
  * Only pure C is used with minimal dependencies on external libraries.
  *
- * @note linear_data_t is reserved for signal processing.
+ * @note numeric_data_t is reserved for signal processing.
  * @ref See teleprint-me/fixed-point for more information
  * https://github.com/teleprint-me/fixed-point.git
  *
