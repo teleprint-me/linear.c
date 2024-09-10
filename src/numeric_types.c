@@ -22,13 +22,13 @@
 #include <stdio.h>
 
 int32_t numeric_encode_float32(float value) {
-    numeric_mask_t data;
+    numeric_union_t data;
     data.value = value;
     return data.bits;
 }
 
 float numeric_decode_float32(int32_t bits) {
-    numeric_mask_t data;
+    numeric_union_t data;
     data.bits = bits;
     return data.value;
 }
