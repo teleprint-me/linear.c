@@ -23,12 +23,12 @@
 
 void* scalar_add_float(void* a, void* b, void* result) {
     *(float*) result = (*(float*) a) + (*(float*) b);
-    return result;
+    return (float*) result;
 }
 
 void* scalar_add_int32(void* a, void* b, void* result) {
     *(int32_t*) result = (*(int32_t*) a) + (*(int32_t*) b);
-    return result;
+    return (int32_t*) result;
 }
 
 // Subtract operations
@@ -40,7 +40,7 @@ void* scalar_subtract_float(void* a, void* b, void* result) {
 
 void* scalar_subtract_int32(void* a, void* b, void* result) {
     *(int32_t*) result = (*(int32_t*) a) - (*(int32_t*) b);
-    return (float*) result;
+    return (int32_t*) result;
 }
 
 // Multiply operations
@@ -52,7 +52,7 @@ void* scalar_multiply_float(void* a, void* b, void* result) {
 
 void* scalar_multiply_int32(void* a, void* b, void* result) {
     *(int32_t*) result = (*(int32_t*) a) * (*(int32_t*) b);
-    return (float*) result;
+    return (int32_t*) result;
 }
 
 // Divide operations
@@ -77,11 +77,11 @@ void* scalar_divide_int32(void* a, void* b, void* result) {
 
 // Scalar operations
 
-void* scalar_add(void* a, void* b, void* result, linear_data_t type) {
+void* scalar_add(void* a, void* b, void* result, numeric_data_t type) {
     switch (type) {
-        case LINEAR_FLOAT:
+        case NUMERIC_FLOAT32:
             return scalar_add_float(a, b, result);
-        case LINEAR_INT32:
+        case NUMERIC_INT32:
             return scalar_add_int32(a, b, result);
         default:
             LOG_ERROR("scalar_add: Unsupported data type\n");
@@ -89,11 +89,11 @@ void* scalar_add(void* a, void* b, void* result, linear_data_t type) {
     }
 }
 
-void* scalar_subtract(void* a, void* b, void* result, linear_data_t type) {
+void* scalar_subtract(void* a, void* b, void* result, numeric_data_t type) {
     switch (type) {
-        case LINEAR_FLOAT:
+        case NUMERIC_FLOAT32:
             return scalar_subtract_float(a, b, result);
-        case LINEAR_INT32:
+        case NUMERIC_INT32:
             return scalar_subtract_int32(a, b, result);
         default:
             LOG_ERROR("scalar_subtract: Unsupported data type\n");
@@ -101,11 +101,11 @@ void* scalar_subtract(void* a, void* b, void* result, linear_data_t type) {
     }
 }
 
-void* scalar_multiply(void* a, void* b, void* result, linear_data_t type) {
+void* scalar_multiply(void* a, void* b, void* result, numeric_data_t type) {
     switch (type) {
-        case LINEAR_FLOAT:
+        case NUMERIC_FLOAT32:
             return scalar_multiply_float(a, b, type);
-        case LINEAR_INT32:
+        case NUMERIC_INT32:
             return scalar_multiply_int32(a, b, result);
         default:
             LOG_ERROR("scalar_multiply: Unsupported data type\n");
@@ -113,11 +113,11 @@ void* scalar_multiply(void* a, void* b, void* result, linear_data_t type) {
     }
 }
 
-void* scalar_divide(void* a, void* b, void* result, linear_data_t type) {
+void* scalar_divide(void* a, void* b, void* result, numeric_data_t type) {
     switch (type) {
-        case LINEAR_FLOAT:
+        case NUMERIC_FLOAT32:
             return scalar_divide_float(a, b, result);
-        case LINEAR_INT32:
+        case NUMERIC_INT32:
             return scalar_divide_int32(a, b, result);
         default:
             LOG_ERROR("scalar_divide: Unsupported data type\n");

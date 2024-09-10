@@ -18,7 +18,7 @@
 extern "C" {
 #endif // __cplusplus
 
-#include "floating_point.h"
+#include "numeric_types.h"
 
 // Scalar operations
 
@@ -35,27 +35,27 @@ extern "C" {
  *
  * @return Result of the operation
  */
-typedef void* (*scalar_operation_t)(void*, void*, void*, linear_data_t);
+typedef void* (*scalar_operation_t)(void*, void*, void*, numeric_data_t);
 
 /**
  * @brief Add two scalar values
  */
-void* scalar_add(void* a, void* b, void* result, linear_data_t type);
+void* scalar_add(void* a, void* b, void* result, numeric_data_t type);
 
 /**
  * @brief Subtract two scalar values
  */
-void* scalar_subtract(void* a, void* b, void* result, linear_data_t type);
+void* scalar_subtract(void* a, void* b, void* result, numeric_data_t type);
 
 /**
  * @brief Multiply two scalar values
  */
-void* scalar_multiply(void* a, void* b, void* result, linear_data_t type);
+void* scalar_multiply(void* a, void* b, void* result, numeric_data_t type);
 
 /**
  * @brief Divide two scalar values
  */
-void* scalar_divide(void* a, void* b, void* result, linear_data_t type);
+void* scalar_divide(void* a, void* b, void* result, numeric_data_t type);
 
 #ifdef __cplusplus
 }
