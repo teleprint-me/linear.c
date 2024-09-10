@@ -34,8 +34,7 @@ extern "C" {
  * @brief A structure representing an N-dimensional vector.
  *
  * This structure stores the number of dimensions and a dynamic array of
- * floating-point values, which represent the components of the vector in each
- * dimension.
+ * values, which represent the components of the vector in each dimension.
  *
  * @param data   One-dimensional array representing the vector elements.
  * @param columns The number of elements (dimensions) in the vector.
@@ -324,7 +323,7 @@ vector_t* vector_vector_divide(const vector_t* a, const vector_t* b);
  *
  * @return The magnitude of the vector
  */
-float vector_magnitude(const vector_t* vector);
+void* vector_magnitude(const vector_t* vector);
 
 /**
  * @brief Calculate the distance between two given N-dimensional vectors
@@ -334,7 +333,7 @@ float vector_magnitude(const vector_t* vector);
  *
  * @return The distance between the two vectors
  */
-float vector_distance(const vector_t* a, const vector_t* b);
+void* vector_distance(const vector_t* a, const vector_t* b);
 
 /**
  * @brief Calculate the mean of an N-dimensional vector
@@ -347,7 +346,7 @@ float vector_distance(const vector_t* a, const vector_t* b);
  *
  * @return The mean of the vector
  */
-float vector_mean(const vector_t* vector);
+void* vector_mean(const vector_t* vector);
 
 /**
  * @brief Low pass filter on an N-dimensional vector
@@ -369,7 +368,7 @@ float vector_mean(const vector_t* vector);
  * or some other kind of mean. What validates this as the "mean" of a given
  * input?
  */
-float vector_low_pass_filter(const vector_t* vector, void* alpha);
+float vector_low_pass_filter(const vector_t* vector, float alpha);
 
 /**
  * @brief Normalize a given N-dimensional vector in place
@@ -419,7 +418,7 @@ vector_t* vector_clip(vector_t* vector, void* min, void* max, bool inplace);
  *
  * @return The dot product of the two vectors
  */
-float vector_dot_product(const vector_t* a, const vector_t* b);
+void* vector_dot_product(const vector_t* a, const vector_t* b);
 
 /**
  * @brief Return the cross product of two 3D vectors
