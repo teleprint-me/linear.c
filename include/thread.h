@@ -31,7 +31,11 @@
 #include <stdlib.h>
 #include <sys/sysinfo.h>
 
-// Define the maximum number of threads if not provided
+/**
+ * @brief Define the maximum number of threads if not provided
+ *
+ * @param LINEAR_THREAD_COUNT The number of CPU threads to utilize
+ */
 #ifndef LINEAR_THREAD_COUNT
     #ifdef __GNUC__
         #define LINEAR_THREAD_COUNT get_nprocs_conf()
@@ -40,18 +44,24 @@
     #endif // __GNUC__
 #endif     // LINEAR_THREAD_COUNT
 
-// @brief Define the linear device type
-//
-// @note All code must be vendor agnostic and completely portable.
-// Utilized GPU backends must support compute shaders and must be vendor
-// agnostic. I plan support Vulkan in isolation as it abstracts vendor specific
-// implementations.
+/**
+ * @brief Define the linear device type
+ *
+ * @param BACKEND_CPU Enable POSIX multi-threading
+ * @param BACKEND_GPU Enable Vulkan parallel processing
+ *
+ * @note All code must be completely portable. Utilized GPU backends must
+ * support compute shaders and must be vendor agnostic. I plan to support
+ * Vulkan in isolation as it abstracts vendor specific implementations.
+ */
 typedef enum LinearBackend {
     BACKEND_CPU, ///< CPU Backend (multi-threading)
     BACKEND_GPU  ///< GPU Backend OpenGL/Vulkan-only
 } linear_backend_t;
 
-// Generalized thread structure using void pointers
+/**
+ * @brief Generalized thread structure using void pointers
+ */
 typedef struct LinearThread {
     void*          a;      ///< Pointer to the first operand.
     void*          b;      ///< Pointer to the second operand.
