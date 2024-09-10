@@ -45,10 +45,10 @@ typedef enum NumericData {
  * @param value The actual 32-bit floating-point value represented by this data
  *              structure.
  */
-typedef union NumericMask {
+typedef union NumericUnion {
     float   value;
     int32_t bits;
-} numeric_mask_t;
+} numeric_union_t;
 
 /**
  * @brief Encodes a given float value into its corresponding 32-bit
