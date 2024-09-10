@@ -15,6 +15,10 @@
 #ifndef LINEAR_THREAD_H
 #define LINEAR_THREAD_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 #include "numeric_types.h"
 #include "scalar.h"
 
@@ -118,5 +122,9 @@ void           thread_pool_wait(thread_pool_t* pool);
 // Additional utilities and operations
 thread_data_t* thread_create(uint32_t num_threads);
 void           thread_free(thread_data_t* thread);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif // LINEAR_THREAD_H
