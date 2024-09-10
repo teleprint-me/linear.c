@@ -75,52 +75,55 @@ void* scalar_divide_int32(void* a, void* b, void* result) {
     return (int32_t*) result;
 }
 
+// Function pointer arrays for operations
+static scalar_operation_t add_operations[NUMERIC_TYPES] = {
+    scalar_add_float32,
+    scalar_add_int32,
+};
+
+static scalar_operation_t subtract_operations[NUMERIC_TYPES] = {
+    scalar_subtract_float32,
+    scalar_subtract_int32,
+};
+
+static scalar_operation_t multiply_operations[NUMERIC_TYPES] = {
+    scalar_multiply_float32,
+    scalar_multiply_int32,
+};
+
+static scalar_operation_t divide_operations[NUMERIC_TYPES] = {
+    scalar_divide_float32,
+    scalar_divide_int32,
+};
+
+// Helper function to get the correct function pointer
+static scalar_operation_t
+get_operation(scalar_operation_t* operations, numeric_data_t type) {
+    if (type >= 0 && type < NUMERIC_TYPES) {
+        return operations[type];
+    }
+    LOG_ERROR("Unsupported data type\n");
+    return NULL;
+}
+
 // Scalar operations
 
 void* scalar_add(void* a, void* b, void* result, numeric_data_t type) {
-    switch (type) {
-        case NUMERIC_FLOAT32:
-            return scalar_add_float32(a, b, result);
-        case NUMERIC_INT32:
-            return scalar_add_int32(a, b, result);
-        default:
-            LOG_ERROR("scalar_add: Unsupported data type\n");
-            return NULL;
-    }
+    scalar_operation_t op = get_operation(add_operations, type);
+    return op ? op(a, b, result, type) : NULL;
 }
 
 void* scalar_subtract(void* a, void* b, void* result, numeric_data_t type) {
-    switch (type) {
-        case NUMERIC_FLOAT32:
-            return scalar_subtract_float32(a, b, result);
-        case NUMERIC_INT32:
-            return scalar_subtract_int32(a, b, result);
-        default:
-            LOG_ERROR("scalar_subtract: Unsupported data type\n");
-            return NULL;
-    }
+    scalar_operation_t op = get_operation(subtract_operations, type);
+    return op ? op(a, b, result, type) : NULL;
 }
 
 void* scalar_multiply(void* a, void* b, void* result, numeric_data_t type) {
-    switch (type) {
-        case NUMERIC_FLOAT32:
-            return scalar_multiply_float32(a, b, type);
-        case NUMERIC_INT32:
-            return scalar_multiply_int32(a, b, result);
-        default:
-            LOG_ERROR("scalar_multiply: Unsupported data type\n");
-            return NULL;
-    }
+    scalar_operation_t op = get_operation(multiply_operations, type);
+    return op ? op(a, b, result, type) : NULL;
 }
 
 void* scalar_divide(void* a, void* b, void* result, numeric_data_t type) {
-    switch (type) {
-        case NUMERIC_FLOAT32:
-            return scalar_divide_float32(a, b, result);
-        case NUMERIC_INT32:
-            return scalar_divide_int32(a, b, result);
-        default:
-            LOG_ERROR("scalar_divide: Unsupported data type\n");
-            return NULL;
-    }
+    scalar_operation_t op = get_operation(divide_operations, type);
+    return op ? op(a, b, result, type) : NULL;
 }
