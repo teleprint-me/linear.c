@@ -1,25 +1,21 @@
 /**
- * Copyright © 2024 Austin Berrio
+ * @file include/numeric_types.h
  *
- * @file include/floating_point.h
- *
- * @brief A simple and easy-to-use API in C for handling various floating-point
- *        precisions, including 32-bit (float), 16-bit (half precision float:
- *        IEEE-754 & bfloat16), 16-bit Google Brain format, and extended 8-bit
- *        floats.
+ * @brief API for handling various numeric types and conversions, currently
+ *        focused on 32-bit floating-point (float) and integer (int32_t)
+ *        representations. Future extensions may include 16-bit and 8-bit
+ *        formats for digital signal processing.
  *
  * Only pure C is used with minimal dependencies on external libraries.
  *
- * @ref See teleprint-me/fixed-point for more information
- *
  * - Keep the interface minimal and focused.
- * - Avoid generics; stick to a single base type (float) for now.
+ * - Avoid generics; stick to a single base type (float, int32) for now.
  * - Isolate conversion logic into a utility file/module.
  * - Maintain clean and comprehensible separation between different components.
  */
 
-#ifndef LINEAR_FLOATING_POINT_H
-#define LINEAR_FLOATING_POINT_H
+#ifndef LINEAR_NUMERIC_TYPES_H
+#define LINEAR_NUMERIC_TYPES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,15 +26,15 @@ extern "C" {
 /**
  * @brief Define the linear data type
  *
- * @param LINEAR_FLOAT Enum representing the float data type
- * @param LINEAR_INT32 Enum representing the int data type
- * @param LINEAR_TYPES Enum representing the number of supported data types
+ * @param NUMERIC_FLOAT Enum representing the float data type
+ * @param NUMERIC_INT32 Enum representing the int data type
+ * @param NUMERIC_TYPES Enum representing the number of supported data types
  */
-typedef enum LinearData {
-    LINEAR_FLOAT, // IEEE-754 32-bit precision
-    LINEAR_INT32, // 32-bit integer precision
-    LINEAR_TYPES, // Number of data types
-} linear_data_t;
+typedef enum NumericData {
+    NUMERIC_FLOAT32, // IEEE-754 32-bit precision
+    NUMERIC_INT32,   // 32-bit integer precision
+    NUMERIC_TYPES,   // Number of data types
+} numeric_data_t;
 
 /**
  * @brief A union representing a flexible floating-point representation,
@@ -49,10 +45,10 @@ typedef enum LinearData {
  * @param value The actual 32-bit floating-point value represented by this data
  *              structure.
  */
-typedef union LinearMask {
+typedef union NumericMask {
     float   value;
     int32_t bits;
-} linear_mask_t;
+} numeric_mask_t;
 
 /**
  * @brief Encodes a given float value into its corresponding 32-bit
@@ -63,7 +59,7 @@ typedef union LinearMask {
  * @return The resulting encoded 32-bit integer representation of the input
  *         value.
  */
-int32_t encode_float32(float value);
+int32_t numeric_encode_float32(float value);
 
 /**
  * @brief Decodes a given 32-bit integer representation into its corresponding
@@ -75,10 +71,10 @@ int32_t encode_float32(float value);
  * @return The decoded actual 32-bit floating-point value represented by this
  *         data structure.
  */
-float decode_float32(int32_t bits);
+float numeric_decode_float32(int32_t bits);
 
 #ifdef __cplusplus
 }
 #endif // __cplusplus
 
-#endif // LINEAR_FLOATING_POINT_H
+#endif // LINEAR_NUMERIC_TYPES_H
