@@ -21,7 +21,6 @@
 #include <pthread.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <sys/sysinfo.h>
 
 /**
  * @brief Define the maximum number of threads if not provided
@@ -37,15 +36,22 @@
  * - https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/C-Extensions.html
  */
 #ifndef LINEAR_THREAD_COUNT
-    #ifdef __GNUC__
+    #ifdef __GNUC__ // GNU C Only
+        #include <sys/sysinfo.h>
         #define LINEAR_THREAD_COUNT get_nprocs_conf()
-    #elif
+    #elif _POSIX_VERSION // POSIX Only
+        #include <unistd.h>
+        #define LINEAR_THREAD_COUNT sysconf(_SC_NPROCESSORS_ONLN)
+    #else // Unknown/Unsupported
         #define LINEAR_THREAD_COUNT 8
     #endif // __GNUC__
 #endif     // LINEAR_THREAD_COUNT
 
 /**
  * @brief Define the linear device type
+ *
+ * Data structure representing supported physical backend devices used for
+ * intensive parallel processing.
  *
  * @param BACKEND_CPU Enable POSIX multi-threading
  * @param BACKEND_GPU Enable Vulkan parallel processing
@@ -54,35 +60,44 @@
  * support compute shaders and must be vendor agnostic. I plan to support
  * Vulkan in isolation as it abstracts vendor specific implementations.
  */
-typedef enum LinearBackend {
-    BACKEND_CPU, ///< CPU Backend (multi-threading)
-    BACKEND_GPU  ///< GPU Backend OpenGL/Vulkan-only
-} linear_backend_t;
+typedef enum ThreadBackend {
+    BACKEND_CPU,    ///< CPU Backend (multi-threading)
+    BACKEND_VULKAN, ///< GPU Backend Vulkan
+    BACKEND_COUNT   ///< Number of supported devices
+} thread_backend_t;
 
 /**
  * @brief Generalized thread structure using void pointers
+ *
+ * @param a Pointer to the first operand
+ * @param b Pointer to the second operand
+ * @param result Pointer to the resultant data
+ * @param begin Starting index for the thread to operate
+ * @param end Ending index for the thread to operate
+ * @param type The data type for the operation
+ * @param operation Pointer to the generalized operation function
  */
-typedef struct LinearThread {
-    void*          a;      ///< Pointer to the first operand.
-    void*          b;      ///< Pointer to the second operand.
-    void*          result; ///< Pointer to the resultant data.
-    uint32_t       begin;  ///< Starting index for the thread to operate.
-    uint32_t       end;    ///< Ending index for the thread to operate.
-    numeric_data_t type;   ///< The data type for the operation
-    scalar_operation_t
-        operation; ///< Pointer to the generalized operation function.
-} linear_thread_t;
+typedef struct ThreadData {
+    void*              a;         ///< Pointer to the first operand
+    void*              b;         ///< Pointer to the second operand
+    void*              result;    ///< Pointer to the resultant data
+    uint32_t           begin;     ///< Threads starting index
+    uint32_t           end;       ///< Threads ending index
+    numeric_data_t     type;      ///< The operations data type
+    scalar_operation_t operation; ///< Pointer to the operation function
+} thread_data_t;
 
 // @todo Pinned: Add proper support for thread pooling
+// @note the implementation for these prototypes should be placed in thread.c
 
-// linear_thread_t* linear_thread_create(uint32_t num_threads);
-// void             linear_thread_free(linear_thread_t* thread);
+// thread_data_t* thread_create(uint32_t num_threads);
+// void           thread_free(thread_data_t* thread);
 
 // Initialize a thread pool (optional)
-// void linear_thread_pool_create(uint32_t num_threads);
-// void linear_thread_pool_free(void);
+// void thread_pool_create(uint32_t num_threads);
+// void thread_pool_free(void);
 
 // Function to perform an operation in parallel
-// void thread_parallel_operation(linear_thread_t* thread);
+// void thread_parallel_operation(thread_data_t* thread);
 
 #endif // LINEAR_THREAD_H
