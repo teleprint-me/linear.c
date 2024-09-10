@@ -23,6 +23,7 @@
 #ifndef LINEAR_THREAD_H
 #define LINEAR_THREAD_H
 
+#include "numeric_types.h"
 #include "scalar.h"
 
 #include <pthread.h>
@@ -52,13 +53,13 @@ typedef enum LinearBackend {
 
 // Generalized thread structure using void pointers
 typedef struct LinearThread {
-    void*         a;      ///< Pointer to the first operand.
-    void*         b;      ///< Pointer to the second operand.
-    void*         result; ///< Pointer to the resultant data.
-    uint32_t      begin;  ///< Starting index for the thread to operate.
-    uint32_t      end;    ///< Ending index for the thread to operate.
-    linear_data_t type;   ///< The data type for the operation
-    linear_operation_t
+    void*          a;      ///< Pointer to the first operand.
+    void*          b;      ///< Pointer to the second operand.
+    void*          result; ///< Pointer to the resultant data.
+    uint32_t       begin;  ///< Starting index for the thread to operate.
+    uint32_t       end;    ///< Ending index for the thread to operate.
+    numeric_data_t type;   ///< The data type for the operation
+    scalar_operation_t
         operation; ///< Pointer to the generalized operation function.
 } linear_thread_t;
 
