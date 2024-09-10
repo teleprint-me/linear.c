@@ -3,17 +3,15 @@
  *
  * @file src/numeric_types.c
  *
- * @brief A simple and easy-to-use API in C for handling various floating-point
- *        precisions, including 32-bit (float), 16-bit (half precision float:
- *        IEEE-754 & bfloat16), 16-bit Google Brain format, and extended 8-bit
- *        floats.
+ * @brief API for handling various numeric types and conversions, currently
+ *        focused on 32-bit floating-point (float) and integer (int32_t)
+ *        representations. Future extensions may include 16-bit and 8-bit
+ *        formats for digital signal processing.
  *
  * Only pure C is used with minimal dependencies on external libraries.
  *
- * @ref See teleprint-me/fixed-point for more information
- *
  * - Keep the interface minimal and focused.
- * - Avoid generics; stick to a single base type (float) for now.
+ * - Avoid generics; stick to a single base type (float, int32) for now.
  * - Isolate conversion logic into a utility file/module.
  * - Maintain clean and comprehensible separation between different components.
  */
