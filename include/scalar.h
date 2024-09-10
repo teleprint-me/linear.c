@@ -28,8 +28,8 @@ extern "C" {
  * These helper functions perform basic arithmetic on two values and return the
  * result for Element-wise operations.
  *
- * @param x First operand
- * @param y Second operand
+ * @param a First operand
+ * @param b Second operand
  * @param result The resultant data from the operation
  * @param type The data type for the operation
  *
