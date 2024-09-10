@@ -22,7 +22,8 @@ extern "C" {
 #endif // __cplusplus
 
 #include "lehmer.h"
-#include "thread.h"
+#include "numeric_types.h"
+#include "scalar.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -42,8 +43,8 @@ extern "C" {
  */
 typedef struct Vector {
     void*    data; ///< One-dimensional array representing the vector elements.
-    uint32_t columns;   ///< The number of elements (dimensions) in the vector.
-    linear_data_t type; ///< The data type of the elements
+    uint32_t columns; ///< The number of elements (dimensions) in the vector.
+    numeric_data_t type; ///< The data type of the elements
 } vector_t;
 
 /**
@@ -57,7 +58,7 @@ typedef struct Vector {
  *
  * @return A pointer to the newly created vector
  */
-vector_t* vector_create(const uint32_t columns);
+vector_t* vector_create(const uint32_t columns, numeric_data_t type);
 
 /**
  * @brief Free an allocated N-dimensional vector
@@ -85,7 +86,7 @@ void vector_free(vector_t* vector);
  * @param vector A pointer to the vector to initialize.
  * @param value A scalar value to initialize the vector with.
  */
-void vector_fill(vector_t* vector, const float value);
+void vector_fill(vector_t* vector, const void* value);
 
 /**
  * @brief Helper function to initialize a vector using a specified random
@@ -210,7 +211,7 @@ vector_t* vector_shallow_copy(const vector_t* vector);
  * @return A pointer to the resulting vector
  */
 vector_t* vector_scalar_operation(
-    const vector_t* a, const float b, float (*operation)(float, float)
+    const vector_t* a, const void* b, scalar_operation_t operation
 );
 
 // Scalar based vector operations
@@ -223,7 +224,7 @@ vector_t* vector_scalar_operation(
  *
  * @return A pointer to the resulting vector
  */
-vector_t* vector_scalar_add(const vector_t* a, const float b);
+vector_t* vector_scalar_add(const vector_t* a, const void* b);
 
 /**
  * @brief Subtract a scalar value from an N-dimensional vector
@@ -233,7 +234,7 @@ vector_t* vector_scalar_add(const vector_t* a, const float b);
  *
  * @return A pointer to the resulting vector
  */
-vector_t* vector_scalar_subtract(const vector_t* a, const float b);
+vector_t* vector_scalar_subtract(const vector_t* a, const void* b);
 
 /**
  * @brief Multiply a scalar value with an N-dimensional vector
@@ -243,7 +244,7 @@ vector_t* vector_scalar_subtract(const vector_t* a, const float b);
  *
  * @return A pointer to the resulting vector
  */
-vector_t* vector_scalar_multiply(const vector_t* a, const float b);
+vector_t* vector_scalar_multiply(const vector_t* a, const void* b);
 
 /**
  * @brief Divide an N-dimensional vector by a scalar value
@@ -253,7 +254,7 @@ vector_t* vector_scalar_multiply(const vector_t* a, const float b);
  *
  * @return A pointer to the resulting vector
  */
-vector_t* vector_scalar_divide(const vector_t* a, const float b);
+vector_t* vector_scalar_divide(const vector_t* a, const void* b);
 
 // Vector based operations
 
@@ -266,12 +267,12 @@ vector_t* vector_scalar_divide(const vector_t* a, const float b);
  * @param a First input vector
  * @param b Second input vector
  * @param operation A pointer to the function performing the element-wise
- * operation
+ *                  operation
  *
  * @return A pointer to the resulting vector
  */
 vector_t* vector_vector_operation(
-    const vector_t* a, const vector_t* b, float (*operation)(float, float)
+    const vector_t* a, const vector_t* b, scalar_operation_t operation
 );
 
 /**
@@ -368,7 +369,7 @@ float vector_mean(const vector_t* vector);
  * or some other kind of mean. What validates this as the "mean" of a given
  * input?
  */
-float vector_low_pass_filter(const vector_t* vector, float alpha);
+float vector_low_pass_filter(const vector_t* vector, void* alpha);
 
 /**
  * @brief Normalize a given N-dimensional vector in place
@@ -391,7 +392,7 @@ vector_t* vector_normalize(vector_t* vector, bool inplace);
  *
  * @return A pointer to the scaled vector
  */
-vector_t* vector_scale(vector_t* vector, float scalar, bool inplace);
+vector_t* vector_scale(vector_t* vector, void* scalar, bool inplace);
 
 /**
  * @brief Clip an N-dimensional vector within a given range
@@ -404,7 +405,7 @@ vector_t* vector_scale(vector_t* vector, float scalar, bool inplace);
  *
  * @return A pointer to the clipped vector
  */
-vector_t* vector_clip(vector_t* vector, float min, float max, bool inplace);
+vector_t* vector_clip(vector_t* vector, void* min, void* max, bool inplace);
 
 // Special vector operations
 
