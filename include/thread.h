@@ -10,14 +10,6 @@
  * parallel using pthreads library.
  *
  * Only pure C is used with minimal dependencies on external libraries.
- *
- * @note numeric_data_t is reserved for signal processing.
- * @ref See teleprint-me/fixed-point for more information
- * https://github.com/teleprint-me/fixed-point.git
- *
- * @note The thread count should always be configurable.
- * @ref See GNU C Extensions for more information
- * https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/C-Extensions.html
  */
 
 #ifndef LINEAR_THREAD_H
@@ -35,6 +27,14 @@
  * @brief Define the maximum number of threads if not provided
  *
  * @param LINEAR_THREAD_COUNT The number of CPU threads to utilize
+ *
+ * @note The thread count should always be configurable.
+ *
+ * @note get_nprocs_conf() is GNU specific is not available if GNU C is
+ * unavailable. Testing for __linux__ becomes moot as a result.
+ *
+ * @ref See GNU C Extensions for more information
+ * - https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/C-Extensions.html
  */
 #ifndef LINEAR_THREAD_COUNT
     #ifdef __GNUC__
