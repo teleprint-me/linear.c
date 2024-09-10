@@ -80,13 +80,19 @@ To automate the build, use the provided script:
 
 To manually build the project:
 
-1. **CPU-only Build:**
+1. **CPU-only Build (Single-threaded):**
 
     ```sh
-    cmake -B build -DCMAKE_BUILD_TYPE=Debug -DLINEAR_VULKAN=0
+    cmake -B build -DCMAKE_BUILD_TYPE=Debug
     ```
 
-2. **Vulkan-accelerated Build:**
+2. **CPU-accelerated Build (Multi-threaded):**
+
+    ```sh
+    cmake -B build -DCMAKE_BUILD_TYPE=Debug -DLINEAR_THREAD=1
+    ```
+
+2. **Vulkan-accelerated Build (Multi-threaded):**
 
     ```sh
     cmake -B build -DCMAKE_BUILD_TYPE=Debug -DLINEAR_VULKAN=1
