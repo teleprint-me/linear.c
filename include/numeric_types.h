@@ -30,22 +30,22 @@ extern "C" {
  * @param NUMERIC_INT32 Enum representing the int data type
  * @param NUMERIC_TYPES Enum representing the number of supported data types
  */
-typedef enum NumericData {
-    NUMERIC_FLOAT32, // IEEE-754 32-bit precision
-    NUMERIC_INT32,   // 32-bit integer precision
-    NUMERIC_TYPES,   // Number of data types
+typedef enum NumericDataType {
+    NUMERIC_FLOAT32, ///< IEEE-754 32-bit precision
+    NUMERIC_INT32,   ///< 32-bit integer precision
+    NUMERIC_TYPES,   ///< Number of data types
 } numeric_data_t;
 
 /**
  * @brief A union representing a flexible floating-point representation,
  *        allowing access to both raw bit data and its corresponding value.
  *
- * @param bits  Raw 32-bit integer bit representation of the floating-point
- *              number.
  * @param value The actual 32-bit floating-point value represented by this data
  *              structure.
+ * @param bits  Raw 32-bit integer bit representation of the floating-point
+ *              number.
  */
-typedef union NumericUnion {
+typedef union NumericUnionType {
     float   value;
     int32_t bits;
 } numeric_union_t;
