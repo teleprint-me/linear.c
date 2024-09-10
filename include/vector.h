@@ -17,7 +17,12 @@
 #ifndef LINEAR_VECTOR_H
 #define LINEAR_VECTOR_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 #include "lehmer.h"
+#include "thread.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -457,5 +462,9 @@ vector_t* vector_polar_to_cartesian(const vector_t* polar_vector);
  * @return A pointer to the vector in polar coordinates
  */
 vector_t* vector_cartesian_to_polar(const vector_t* cartesian_vector);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif // LINEAR_VECTOR_H
