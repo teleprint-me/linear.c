@@ -25,8 +25,8 @@ extern "C" {
 /**
  * @brief Perform arithmetic operations
  *
- * These helper functions perform basic arithmetic on two floating-point values
- * and return the result for Element-wise operations.
+ * These helper functions perform basic arithmetic on two values and return the
+ * result for Element-wise operations.
  *
  * @param x First operand
  * @param y Second operand
