@@ -23,7 +23,20 @@ extern "C" {
 // Scalar operations
 
 /**
- * @brief Perform arithmetic operations
+ * @brief Execute the literal arithmetic operation
+ *
+ * @param a First operand
+ * @param b Second operand
+ * @param result The resultant data from the operation
+ *
+ * @return Result of the operation
+ *
+ * @note This is for internal use only - private.
+ */
+typedef void* (*scalar_arithmetic_t)(void*, void*, void*);
+
+/**
+ * @brief Execute the representative arithmetic operation
  *
  * These helper functions perform basic arithmetic on two values and return the
  * result for Element-wise operations.
@@ -34,6 +47,8 @@ extern "C" {
  * @param type The data type for the operation
  *
  * @return Result of the operation
+ *
+ * @note This is for external use only - public.
  */
 typedef void* (*scalar_operation_t)(void*, void*, void*, numeric_data_t);
 
