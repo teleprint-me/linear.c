@@ -76,29 +76,29 @@ void* scalar_divide_int32(void* a, void* b, void* result) {
 }
 
 // Function pointer arrays for operations
-static scalar_arithmetic_t add_operations[NUMERIC_TYPES] = {
+static scalar_arithmetic_t scalar_operations_add[NUMERIC_TYPES] = {
     scalar_add_float32,
     scalar_add_int32,
 };
 
-static scalar_arithmetic_t subtract_operations[NUMERIC_TYPES] = {
+static scalar_arithmetic_t scalar_operations_subtract[NUMERIC_TYPES] = {
     scalar_subtract_float32,
     scalar_subtract_int32,
 };
 
-static scalar_arithmetic_t multiply_operations[NUMERIC_TYPES] = {
+static scalar_arithmetic_t scalar_operations_multiply[NUMERIC_TYPES] = {
     scalar_multiply_float32,
     scalar_multiply_int32,
 };
 
-static scalar_arithmetic_t divide_operations[NUMERIC_TYPES] = {
+static scalar_arithmetic_t scalar_operations_divide[NUMERIC_TYPES] = {
     scalar_divide_float32,
     scalar_divide_int32,
 };
 
 // Helper function to get the correct function pointer
 static scalar_arithmetic_t
-get_operation(scalar_arithmetic_t* operations, numeric_data_t type) {
+scalar_operation_get(scalar_arithmetic_t* operations, numeric_data_t type) {
     if (type >= 0 && type < NUMERIC_TYPES) {
         return operations[type];
     }
@@ -109,21 +109,24 @@ get_operation(scalar_arithmetic_t* operations, numeric_data_t type) {
 // Scalar operations
 
 void* scalar_add(void* a, void* b, void* result, numeric_data_t type) {
-    scalar_arithmetic_t op = get_operation(add_operations, type);
+    scalar_arithmetic_t op = scalar_operation_get(scalar_operations_add, type);
     return op ? op(a, b, result) : NULL;
 }
 
 void* scalar_subtract(void* a, void* b, void* result, numeric_data_t type) {
-    scalar_arithmetic_t op = get_operation(subtract_operations, type);
+    scalar_arithmetic_t op
+        = scalar_operation_get(scalar_operations_subtract, type);
     return op ? op(a, b, result) : NULL;
 }
 
 void* scalar_multiply(void* a, void* b, void* result, numeric_data_t type) {
-    scalar_arithmetic_t op = get_operation(multiply_operations, type);
+    scalar_arithmetic_t op
+        = scalar_operation_get(scalar_operations_multiply, type);
     return op ? op(a, b, result) : NULL;
 }
 
 void* scalar_divide(void* a, void* b, void* result, numeric_data_t type) {
-    scalar_arithmetic_t op = get_operation(divide_operations, type);
+    scalar_arithmetic_t op
+        = scalar_operation_get(scalar_operations_divide, type);
     return op ? op(a, b, result) : NULL;
 }
