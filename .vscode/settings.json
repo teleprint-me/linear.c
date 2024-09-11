@@ -90,6 +90,7 @@
     "chrono": "c",
     "random": "c",
     "*.ipp": "c",
-    "functional": "c"
+    "functional": "c",
+    "vector": "c"
   }
 }
