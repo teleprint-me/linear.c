@@ -5,6 +5,13 @@
  *
  * @note Keep fixtures and tests as simple as reasonably possible.
  *       The simpler, the better.
+ *
+ * Manual Build:
+ *     gcc -o test_linear_scalar \
+ *         mods/logger/src/logger.c \
+ *         src/numeric_types.c src/scalar.c \
+ *         tests/test_linear_scalar.c \
+ *         -I./include -I./mods/logger/include
  */
 
 #include "logger.h"
