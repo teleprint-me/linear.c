@@ -25,6 +25,10 @@ extern "C" {
 /**
  * @brief Execute the literal arithmetic operation
  *
+ * These helper functions perform basic arithmetic on two values and return the
+ * result for Element-wise operations. This function applies the literal type
+ * casting based on the selected data type.
+ *
  * @param a First operand
  * @param b Second operand
  * @param result The resultant data from the operation
@@ -39,7 +43,9 @@ typedef void* (*scalar_arithmetic_t)(void*, void*, void*);
  * @brief Execute the representative arithmetic operation
  *
  * These helper functions perform basic arithmetic on two values and return the
- * result for Element-wise operations.
+ * result for Element-wise operations. This function abstracts the literal
+ * operation based on the data type and automates selection, type casting,
+ * and operational execution.
  *
  * @param a First operand
  * @param b Second operand
