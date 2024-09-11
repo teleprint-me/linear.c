@@ -52,6 +52,15 @@ extern "C" {
     #endif // __GNUC__
 #endif     // LINEAR_THREAD_COUNT
 
+#ifndef LINEAR_MESSAGE_QUEUE_NAME
+    #define LINEAR_MESSAGE_QUEUE_NAME "linear_thread_pool"
+#endif // LINEAR_MESSAGE_QUEUE_NAME
+
+// @note Default is 10 if msg_max attr is set to NULL on open
+#ifndef LINEAR_MESSAGE_QUEUE_MAX_SIZE
+    #define LINEAR_MESSAGE_QUEUE_MAX_SIZE 1024
+#endif // LINEAR_MESSAGE_QUEUE_MAX_SIZE
+
 /**
  * @brief Define the linear device type
  *
@@ -60,6 +69,7 @@ extern "C" {
  *
  * @param BACKEND_CPU Enable POSIX (CPU multi-threading)
  * @param BACKEND_VULKAN Enable Vulkan (GPU parallel-processing)
+ * @param BACKEND_COUNT Number of supported devices
  *
  * @note Supported backends must be vendor agnostic.
  */
@@ -95,24 +105,30 @@ typedef struct ThreadData {
  *
  * Manages a pool of threads and tasks.
  *
- * @param threads Array of threads
- * @param num_threads Number of threads in the pool
- * @param task_queue Queue of tasks
- * @param queue_mutex Mutex for queue synchronization
- * @param task_cond Condition variable for task availability
- * @param queue_size Size of the task queue
- * @param task_count Current number of tasks in the queue
- * @param shutdown Flag to indicate if the pool should shutdown
+ * @param threads        Array of threads
+ * @param task_queue     Task queue
+ * @param queue_size     Max queue size
+ * @param task_count     Current task count
+ * @param head           Index of the queue head
+ * @param tail           Index of the queue tail
+ * @param queue_mutex    Mutex for synchronizing access to the task queue
+ * @param task_available Condition variable to signal the availability of tasks
+ * @param task_done      Condition variable to signal all tasks completed
+ * @param thread_count   Number of worker threads
+ * @param stop           Flag to stop the pool
  */
 typedef struct ThreadPool {
-    thread_data_t*  task_queue;  // Queue of tasks
-    pthread_t*      threads;     // Array of threads
-    pthread_mutex_t queue_mutex; // Mutex for queue synchronization
-    pthread_cond_t  task_cond;   // Condition variable for task availability
-    uint32_t        num_threads; // Number of threads in the pool
-    uint32_t        queue_size;  // Size of the task queue
-    uint32_t        task_count;  // Current number of tasks in the queue
-    uint32_t        shutdown; // Flag to indicate if the pool should shutdown
+    thread_data_t*  task_queue;     // Array of threads
+    pthread_t*      threads;        // Task queue
+    pthread_mutex_t queue_mutex;    // Max queue size
+    pthread_cond_t  task_available; // Current task count
+    pthread_cond_t  task_done;      // Index of the queue head
+    uint32_t        queue_size;     // Index of the queue tail
+    uint32_t        task_count;     // Mutex for synchronizing access
+    uint32_t        head;           // Signals the availability of tasks
+    uint32_t        tail;           // Signals all tasks completed
+    uint32_t        thread_count;   // Number of worker threads
+    int             stop;           // Flag to stop the pool
 } thread_pool_t;
 
 // Function prototypes for thread pool API
