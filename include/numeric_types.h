@@ -26,14 +26,14 @@ extern "C" {
 /**
  * @brief Define the linear data type
  *
- * @param NUMERIC_FLOAT Enum representing the float data type
- * @param NUMERIC_INT32 Enum representing the int data type
- * @param NUMERIC_TYPES Enum representing the number of supported data types
+ * @param NUMERIC_FLOAT IEEE-754 32-bit precision
+ * @param NUMERIC_INT32 32-bit integer precision
+ * @param NUMERIC_TYPES Number of data types
  */
 typedef enum NumericDataType {
-    NUMERIC_FLOAT32, ///< IEEE-754 32-bit precision
-    NUMERIC_INT32,   ///< 32-bit integer precision
-    NUMERIC_TYPES,   ///< Number of data types
+    NUMERIC_FLOAT32, // IEEE-754 32-bit precision
+    NUMERIC_INT32,   // 32-bit integer precision
+    NUMERIC_TYPES,   // Number of data types
 } numeric_data_t;
 
 /**

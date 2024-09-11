@@ -37,6 +37,8 @@ extern "C" {
  *
  * @ref See GNU C Extensions for more information
  * - https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/C-Extensions.html
+ * @ref Cross platform preprocessor defines
+ * - https://stackoverflow.com/a/26225829/20035933
  */
 #ifndef LINEAR_THREAD_COUNT
     #ifdef __GNUC__ // GNU C Only
@@ -62,9 +64,9 @@ extern "C" {
  * @note Supported backends must be vendor agnostic.
  */
 typedef enum ThreadBackend {
-    BACKEND_CPU,    ///< Enable POSIX (CPU multi-threading)
-    BACKEND_VULKAN, ///< Enable Vulkan (GPU parallel-processing)
-    BACKEND_COUNT   ///< Number of supported devices
+    BACKEND_CPU,    // Enable POSIX (CPU multi-threading)
+    BACKEND_VULKAN, // Enable Vulkan (GPU parallel-processing)
+    BACKEND_COUNT   // Number of supported devices
 } thread_backend_t;
 
 /**
@@ -79,13 +81,13 @@ typedef enum ThreadBackend {
  * @param operation Pointer to the generalized operation function
  */
 typedef struct ThreadData {
-    void*              a;         ///< Pointer to the first operand
-    void*              b;         ///< Pointer to the second operand
-    void*              result;    ///< Pointer to the resultant data
-    uint32_t           begin;     ///< Threads starting index
-    uint32_t           end;       ///< Threads ending index
-    numeric_data_t     type;      ///< The operations data type
-    scalar_operation_t operation; ///< Pointer to the operation function
+    void*              a;         // Pointer to the first operand
+    void*              b;         // Pointer to the second operand
+    void*              result;    // Pointer to the resultant data
+    uint32_t           begin;     // Threads starting index
+    uint32_t           end;       // Threads ending index
+    numeric_data_t     type;      // The operations data type
+    scalar_operation_t operation; // Pointer to the operation function
 } thread_data_t;
 
 /**
@@ -103,19 +105,19 @@ typedef struct ThreadData {
  * @param shutdown Flag to indicate if the pool should shutdown
  */
 typedef struct ThreadPool {
-    pthread_t*      threads;     ///< Array of threads
-    uint32_t        num_threads; ///< Number of threads in the pool
-    thread_data_t*  task_queue;  ///< Queue of tasks
-    pthread_mutex_t queue_mutex; ///< Mutex for queue synchronization
-    pthread_cond_t  task_cond;   ///< Condition variable for task availability
-    uint32_t        queue_size;  ///< Size of the task queue
-    uint32_t        task_count;  ///< Current number of tasks in the queue
-    uint32_t        shutdown; ///< Flag to indicate if the pool should shutdown
+    thread_data_t*  task_queue;  // Queue of tasks
+    pthread_t*      threads;     // Array of threads
+    pthread_mutex_t queue_mutex; // Mutex for queue synchronization
+    pthread_cond_t  task_cond;   // Condition variable for task availability
+    uint32_t        num_threads; // Number of threads in the pool
+    uint32_t        queue_size;  // Size of the task queue
+    uint32_t        task_count;  // Current number of tasks in the queue
+    uint32_t        shutdown; // Flag to indicate if the pool should shutdown
 } thread_pool_t;
 
 // Function prototypes for thread pool API
 thread_pool_t* thread_pool_create(uint32_t num_threads);
-void           thread_pool_destroy(thread_pool_t* pool);
+void           thread_pool_free(thread_pool_t* pool);
 void           thread_pool_submit(thread_pool_t* pool, thread_data_t task);
 void           thread_pool_wait(thread_pool_t* pool);
 
